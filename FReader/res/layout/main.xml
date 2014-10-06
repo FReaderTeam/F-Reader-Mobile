@@ -3,8 +3,15 @@
 	android:orientation="vertical" 
 	android:layout_width="fill_parent"
  	android:layout_height="fill_parent">
+
+    <Button
+        android:id="@+id/mButtonLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Log out" />
 	
 	 <ListView 
 	 	android:layout_height="wrap_content"
 	 	android:layout_width="fill_parent" android:id="@+id/listV_main"/>
+
 </LinearLayout>

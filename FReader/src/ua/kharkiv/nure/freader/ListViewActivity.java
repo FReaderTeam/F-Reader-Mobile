@@ -1,15 +1,17 @@
 package ua.kharkiv.nure.freader;
 
-
 import java.util.ArrayList;
 
 import ua.kharkiv.nure.freader.R;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -32,8 +34,25 @@ public class ListViewActivity extends Activity {
         		Toast.makeText(ListViewActivity.this, "You have chosen : " + obj_itemDetails.getName(), Toast.LENGTH_SHORT).show();
         	}  
         });
+        
+        Button button = (Button)findViewById(R.id.mButtonLogout);
+		button.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				onClickOutter(v);
+			}
+		});
     }
 	
+	public void onClickOutter(View v) {
+		boolean isLogout;
+		Intent intent = new Intent(ListViewActivity.this, MainActivity.class);
+		isLogout = true;
+		intent.putExtra("isLogout", isLogout);
+		startActivity(intent);
+	}
+    
+    
     //Method for searching book collection of user
 	private ArrayList<Book> GetSearchResults(){
 		// add 3 books for an example
