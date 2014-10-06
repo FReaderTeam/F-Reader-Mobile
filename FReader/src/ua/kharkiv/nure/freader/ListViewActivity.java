@@ -46,7 +46,7 @@ public class ListViewActivity extends Activity {
 	
 	public void onClickOutter(View v) {
 		boolean isLogout;
-		Intent intent = new Intent(ListViewActivity.this, MainActivity.class);
+		Intent intent = new Intent(ListViewActivity.this, KateForm.class);
 		isLogout = true;
 		intent.putExtra("isLogout", isLogout);
 		startActivity(intent);

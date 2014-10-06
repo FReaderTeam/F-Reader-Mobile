@@ -29,7 +29,7 @@ public class KateForm extends Activity{
 	    EditText edUserName = (EditText) findViewById(R.id.login);
 	    EditText edDescription = (EditText) findViewById(R.id.password);
 
-		Intent intent = new Intent(KateForm.this, MainActivity.class);
+		Intent intent = new Intent(KateForm.this, ListViewActivity.class);
 		intent.putExtra("login", edUserName.getText().toString()); 
 		intent.putExtra("password", edDescription.getText().toString());
 		startActivity(intent);

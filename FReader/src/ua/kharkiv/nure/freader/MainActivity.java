@@ -32,9 +32,9 @@ public class MainActivity extends Activity {
 
 			boolean isLogout = getIntent().getBooleanExtra("isLogout", true);
 			if (isLogout) {
-				Editor editor = sp.edit();
-				editor.clear();
-				editor.commit();
+				e = sp.edit();
+				e.clear();
+				e.commit();
 			}
 		} else {
 			Intent intentKateActivity = new Intent(MainActivity.this,
