@@ -5,6 +5,5 @@
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Nikita/Desktop/f-reader/DBRoulette/libs/dropbox-android-sdk-1.6.1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
