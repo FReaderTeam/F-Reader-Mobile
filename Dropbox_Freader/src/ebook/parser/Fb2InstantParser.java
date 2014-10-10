@@ -1,24 +1,8 @@
-/*
- * Copyright (C) 2011 Andrew Mochalov <avmae@mail.ru>
- * 
- *  This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA 
- */
 package ebook.parser;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.regex.*;
 
 import ebook.EBook;
@@ -27,7 +11,7 @@ import ebook.Person;
 /**
  * FB2InstantParser
  */
-class Fb2InstantParser {
+public class Fb2InstantParser {
 	private final int MAX_FB2INFO_SIZE = 4096;
 	private final int MAX_XMLINFO_SIZE = 80;
 	private final int MAX_FB2_SIZE = 2097152;
@@ -35,7 +19,7 @@ class Fb2InstantParser {
 	private String source;
 	private InputStream input;
 
-	Fb2InstantParser(EBook eBook, InputStream input) throws IOException {
+	public Fb2InstantParser(EBook eBook, InputStream input) throws IOException {
 		this.eBook = eBook;
 		this.source = this.createSource(input);
 		this.input = input;
@@ -43,10 +27,10 @@ class Fb2InstantParser {
 
 	private String createSource(InputStream stream) throws IOException,
 			NullPointerException {
-		byte[] buffer = readInputStream(stream);
+		byte[] buffer = readInputStreamForBody(stream);
 		this.eBook.encoding = this.getXmlEncoding(buffer);
 		String preparedInput = new String(buffer, this.eBook.encoding);
-		Matcher matcher =  SOP.fb2Annotation.matcher(preparedInput);
+		Matcher matcher = SOP.fb2Annotation.matcher(preparedInput);
 		if (matcher.find()) {
 			this.eBook.annotation = matcher.group(1);
 			preparedInput = matcher.replaceFirst("");
@@ -54,7 +38,34 @@ class Fb2InstantParser {
 		return preparedInput;
 	}
 
-	private byte[] readInputStream(InputStream input) throws IOException {
+	private byte[] readInputStreamForBody(InputStream input) throws IOException {
+		byte[] buffer = new byte[MAX_FB2_SIZE];
+		int counter = MAX_FB2INFO_SIZE;
+		int amount = 0;
+		int stopCounter = 0;
+		boolean stop = false;
+		while (!stop & (amount < MAX_FB2_SIZE) && (counter != -1)) {
+			counter = input.read(buffer, amount, MAX_FB2_SIZE - amount);
+			amount += counter;
+			while (stopCounter < amount) {
+				if (buffer[stopCounter] == '>')
+					if (buffer[stopCounter - 1] == 'y')
+						if (buffer[stopCounter - 6] == '<')
+							if (buffer[stopCounter - 4] == 'b') {
+								stop = true;
+								break;
+							}
+				stopCounter++;
+			}
+		}
+		if (amount <= 0)
+			throw new IOException("Epmty input stream");
+		byte[] output = new byte[stopCounter];
+		System.arraycopy(buffer, 0, output, 0, stopCounter);
+		return output;
+	}
+
+	private byte[] readInputStreamForHead(InputStream input) throws IOException {
 		byte[] buffer = new byte[MAX_FB2INFO_SIZE];
 		int counter = 0;
 		int amount = 0;
@@ -139,6 +150,20 @@ class Fb2InstantParser {
 			}
 		}
 		this.eBook.isOk = true;
+	}
+
+	public ArrayList<String> getBookBody() {
+		Matcher m = SOP.fb2Paragraph.matcher(source);
+		ArrayList<String> col = new ArrayList<String>();
+		try {
+			while (m.find()) {
+				col.add(m.group(0).replaceAll("<.*?>", ""));
+			}
+			return col;
+		} catch (NullPointerException npe) {
+			return col;
+		}
+
 	}
 
 	private byte[] getCover() {
