@@ -14,3 +14,8 @@ import ebook.parser.*;
 		} catch (IOException e) {
 		}
 	}
+	
+	
+TAGS:
+%new-section
+%title

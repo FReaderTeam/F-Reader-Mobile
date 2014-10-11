@@ -27,7 +27,7 @@ public class Fb2InstantParser {
 
 	private String createSource(InputStream stream) throws IOException,
 			NullPointerException {
-		byte[] buffer = readInputStreamForBody(stream);
+		byte[] buffer = readInputStream(stream);
 		this.eBook.encoding = this.getXmlEncoding(buffer);
 		String preparedInput = new String(buffer, this.eBook.encoding);
 		Matcher matcher = SOP.fb2Annotation.matcher(preparedInput);
@@ -38,9 +38,9 @@ public class Fb2InstantParser {
 		return preparedInput;
 	}
 
-	private byte[] readInputStreamForBody(InputStream input) throws IOException {
+	private byte[] readInputStream(InputStream input) throws IOException {
 		byte[] buffer = new byte[MAX_FB2_SIZE];
-		int counter = MAX_FB2INFO_SIZE;
+		int counter = 0;
 		int amount = 0;
 		int stopCounter = 0;
 		boolean stop = false;
@@ -53,6 +53,7 @@ public class Fb2InstantParser {
 						if (buffer[stopCounter - 6] == '<')
 							if (buffer[stopCounter - 4] == 'b') {
 								stop = true;
+								stopCounter++;
 								break;
 							}
 				stopCounter++;
@@ -65,32 +66,19 @@ public class Fb2InstantParser {
 		return output;
 	}
 
-	private byte[] readInputStreamForHead(InputStream input) throws IOException {
-		byte[] buffer = new byte[MAX_FB2INFO_SIZE];
-		int counter = 0;
-		int amount = 0;
-		int stopCounter = 0;
-		boolean stop = false;
-		while (!stop & (amount < MAX_FB2INFO_SIZE) && (counter != -1)) {
-			counter = input.read(buffer, amount, MAX_FB2INFO_SIZE - amount);
-			amount += counter;
-			while (stopCounter < amount) {
-				if (buffer[stopCounter] == '>')
-					if (buffer[stopCounter - 1] == 'o')
-						if (buffer[stopCounter - 12] == '<')
-							if (buffer[stopCounter - 10] == 't') {
-								stop = true;
-								break;
-							}
-				stopCounter++;
-			}
-		}
-		if (amount <= 0)
-			throw new IOException("Epmty input stream");
-		byte[] output = new byte[stopCounter];
-		System.arraycopy(buffer, 0, output, 0, stopCounter);
-		return output;
-	}
+	/*
+	 * private byte[] readInputStream2(InputStream input) throws IOException {
+	 * byte[] buffer = new byte[MAX_FB2INFO_SIZE]; int counter = 0; int amount =
+	 * 0; int stopCounter = 0; boolean stop = false; while (!stop & (amount <
+	 * MAX_FB2INFO_SIZE) && (counter != -1)) { counter = input.read(buffer,
+	 * amount, MAX_FB2INFO_SIZE - amount); amount += counter; while (stopCounter
+	 * < amount) { if (buffer[stopCounter] == '>') if (buffer[stopCounter - 1]
+	 * == 'o') if (buffer[stopCounter - 12] == '<') if (buffer[stopCounter - 10]
+	 * == 't') { stop = true; break; } stopCounter++; } } if (amount <= 0) throw
+	 * new IOException("Epmty input stream"); byte[] output = new
+	 * byte[stopCounter]; System.arraycopy(buffer, 0, output, 0, stopCounter);
+	 * return output; }
+	 */
 
 	private String getXmlEncoding(byte[] input) throws IOException {
 		String encoding = null;
@@ -123,7 +111,7 @@ public class Fb2InstantParser {
 		matcher = SOP.fb2Author.matcher(source);
 		while (matcher.find())
 			this.eBook.authors.add(extractPerson(matcher.group(1)));
-		matcher = SOP.fb2Title.matcher(source);
+		matcher = SOP.fb2BookTitle.matcher(source);
 		if (matcher.find())
 			this.eBook.title = matcher.group(1);
 		matcher = SOP.fb2genre.matcher(source);
@@ -152,22 +140,68 @@ public class Fb2InstantParser {
 		this.eBook.isOk = true;
 	}
 
+	@SuppressWarnings("finally")
 	public ArrayList<String> getBookBody() {
-		Matcher m = SOP.fb2Paragraph.matcher(source);
+		Matcher body = SOP.fb2Body.matcher(source);
 		ArrayList<String> col = new ArrayList<String>();
 		try {
-			while (m.find()) {
-				col.add(m.group(0).replaceAll("<.*?>", ""));
+			if (body.find()) {
+				Matcher title = SOP.fb2Title.matcher(body.group(0));
+				Matcher paragraph;
+				if (title.find()) {
+					paragraph = SOP.fb2Paragraph.matcher(title.group(0));
+					while (paragraph.find()) {
+						col.add("%title"
+								+ paragraph.group(0).replaceAll("<.*?>", ""));
+					}
+				}
+				Matcher epigraph = SOP.fb2PreBodyEpigraphs
+						.matcher(body.group());
+				if (epigraph.find()) {
+					paragraph = SOP.fb2Paragraph.matcher(epigraph.group(0));
+					while (paragraph.find()) {
+						col.add(paragraph.group(0).replaceAll("<.*?>", ""));
+					}
+				}
+				Matcher section = SOP.fb2Section.matcher(body.group(0));
+				while (section.find()) {
+					boolean newSection = true;
+					title = SOP.fb2Title.matcher(section.group(0));
+					while (title.find()) {
+						StringBuilder s = new StringBuilder();
+						if (newSection) {
+							s.append("%new-section");
+							newSection = false;
+						}
+						paragraph = SOP.fb2Paragraph.matcher(title.group(0));
+						short paragraphIndexer = 0;
+						while (paragraph.find()) {
+							s.append("%title");
+							s.append(paragraph.group(0).replaceAll("<.*?>", ""));
+							col.add(s.toString());
+							paragraphIndexer++;
+						}
+						paragraph = SOP.fb2Paragraph.matcher(section.group(0));
+						do {
+							if (paragraph.find()) {
+								paragraph.group(0);
+								paragraphIndexer--;
+							}
+						} while (paragraphIndexer > 0);
+						while (paragraph.find()) {
+							col.add(paragraph.group(0).replaceAll("<.*?>", ""));
+						}
+					}
+				}
+
 			}
-			return col;
-		} catch (NullPointerException npe) {
+		} catch (NullPointerException e) {
+		} finally {
 			return col;
 		}
-
 	}
 
 	private byte[] getCover() {
-		// int q = this.input.available();
 		byte[] buffer = new byte[MAX_FB2_SIZE];
 		byte[] cover64;
 		int amount = 0;
