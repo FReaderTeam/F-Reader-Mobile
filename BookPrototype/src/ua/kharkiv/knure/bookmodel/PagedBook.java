@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class PagedBook extends Book {
 
-	private ArrayList<String> pages;
+	private ArrayList<CharSequence> pages;
 	private int current_page;
 	
-	public PagedBook(String t, String a, ArrayList<String> p) {
+	public PagedBook(String t, String a, ArrayList<CharSequence> p) {
 		super(t, a);
 		pages = p;
 		current_page = 1;
@@ -17,11 +17,11 @@ public class PagedBook extends Book {
 		return pages.size();
 	}
 	
-	public String getCurrentPage(){
+	public CharSequence getCurrentPage(){
 		return pages.get(current_page-1);
 	}
 	
-	public String getPage(int index){
+	public CharSequence getPage(int index){
 		current_page = index;
 		return pages.get(index-1);
 	}
