@@ -30,14 +30,16 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 	private String mErrorMsg;
 	private String mBookName;
 	private String appFolderPath;
+	private BookCollectionFragment fragment;
 
 	@SuppressWarnings("deprecation")
 	public DownloadBookTask(Context context, DropboxAPI<?> api,
-			String bookName, String appPath) {
+			String bookName, String appPath, BookCollectionFragment f) {
 		mContext = context.getApplicationContext();
 		mBookName = bookName;
 		mApi = api;
 		appFolderPath = appPath;
+		fragment = f;
 
 		mDialog = new ProgressDialog(context);
 		mDialog.setMessage("Downloading");
@@ -121,11 +123,12 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 	@Override
 	protected void onPostExecute(Boolean result) {
 		mDialog.dismiss();
-		if (result) {
-			showToast("Succesfull!");
-		} else {
+		if (!result) {
 			// Couldn't download it, so show an error
 			showToast(mErrorMsg);
+		} else {
+			showToast("Succesfull!");
+			fragment.callbackDBTask(appFolderPath + "/" + mBookName);
 		}
 	}
 

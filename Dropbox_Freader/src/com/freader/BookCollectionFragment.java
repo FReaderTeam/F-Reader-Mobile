@@ -1,5 +1,8 @@
 package com.freader;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Fragment;
@@ -16,6 +19,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.DropboxAPI.Entry;
 import com.dropbox.client2.android.AndroidAuthSession;
+import ebook.*;
+import ebook.parser.*;
 
 public class BookCollectionFragment extends Fragment {
 
@@ -44,7 +49,7 @@ public class BookCollectionFragment extends Fragment {
 				Object obj = mBookListView.getItemAtPosition(position);
 				String obj_itemDetails = (String) obj;
 				new DownloadBookTask(getActivity(), mApi, obj_itemDetails,
-						mAppPath).execute();
+						mAppPath, BookCollectionFragment.this).execute();
 			}
 		});
 		return view;
@@ -70,6 +75,22 @@ public class BookCollectionFragment extends Fragment {
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
 				android.R.layout.simple_list_item_1, fileNames);
 		mBookListView.setAdapter(adapter);
+	}
+	
+	public void callbackDBTask(String bookPath)
+	{
+		//TODO parse
+		Parser parser = new InstantParser();
+		EBook ebook = parser.parse(bookPath);
+		ArrayList<String> arr = new ArrayList<String>();
+		if (ebook.isOk) {
+			try {
+				arr = parser.getBookBody();
+			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
+			}
+		}
+		
 	}
 
 	public void onDropboxUnlinkedException() {
