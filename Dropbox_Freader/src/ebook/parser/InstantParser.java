@@ -23,10 +23,6 @@ public class InstantParser extends ebook.parser.Parser {
 		if (SOP.fb2zipFile.matcher(this.eBook.fileName).matches()) {
 			this.eBook.format = EBookFormat.FB2;
 			this.parseFb2Zip();
-		}
-		if (SOP.epubFile.matcher(this.eBook.fileName).matches()) {
-			this.eBook.format = EBookFormat.EPUB;
-			this.parseEpub();
 		} else {
 			this.eBook.format = EBookFormat.UNSUPPORTED;
 		}
@@ -76,15 +72,4 @@ public class InstantParser extends ebook.parser.Parser {
 			e.printStackTrace();
 		}
 	}
-
-	private void parseEpub() {
-		try {
-			EpubInstantParser parser = new EpubInstantParser(this.eBook);
-			parser.parse();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 }

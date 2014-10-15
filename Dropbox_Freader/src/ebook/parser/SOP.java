@@ -30,12 +30,6 @@ class SOP {
 	protected static Pattern fb2Epigraph;
 	protected static Pattern fb2EpigraphAuthor;
 	protected static Pattern fb2PreBodyEpigraphs;
-	protected static Pattern epubDescription;
-	protected static Pattern epubTitle;
-	protected static Pattern epubAuthor;
-	protected static Pattern epubLanguage;
-	protected static Pattern epubGenre;
-	protected static Pattern epubCover;	
 	//
 	//
 	static {
@@ -66,15 +60,6 @@ class SOP {
 		fb2EpigraphAuthor = Pattern
 				.compile("(?s)<text-author>(.*?)</text-author>");
 		fb2PreBodyEpigraphs = Pattern.compile("(?s)</title>(.*?)<section>");
-
-		epubDescription = Pattern
-				.compile("(?s)<dc:description>(.*?)</dc:description>");
-		epubTitle = Pattern.compile("(?s)<dc:title>(.*?)</dc:title>");
-		epubAuthor = Pattern.compile("(?s)<dc:creator.*?>(.*?)</dc:creator>");
-		epubLanguage = Pattern
-				.compile("(?s)<dc:language.*?>(.*?)</dc:language>");
-		epubGenre = Pattern.compile("(?s)<dc:subject.*?>(.*?)</dc:subject>");
-		epubCover = Pattern.compile("(?s)<embeddedcover>(.*?)</embeddedcover>");
 	}
 
 }

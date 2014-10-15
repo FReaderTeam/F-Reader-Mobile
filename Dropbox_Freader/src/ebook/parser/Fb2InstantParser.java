@@ -166,32 +166,33 @@ public class Fb2InstantParser {
 				Matcher section = SOP.fb2Section.matcher(body.group(0));
 				while (section.find()) {
 					boolean newSection = true;
+					short paragraphIndexer = 0;
 					title = SOP.fb2Title.matcher(section.group(0));
-					while (title.find()) {
-						StringBuilder s = new StringBuilder();
+					StringBuilder s = new StringBuilder();
+					if (title.find()) {
 						if (newSection) {
 							s.append("%new-section");
 							newSection = false;
 						}
 						paragraph = SOP.fb2Paragraph.matcher(title.group(0));
-						short paragraphIndexer = 0;
 						while (paragraph.find()) {
 							s.append("%title");
 							s.append(paragraph.group(0).replaceAll("<.*?>", ""));
 							col.add(s.toString());
 							paragraphIndexer++;
 						}
-						paragraph = SOP.fb2Paragraph.matcher(section.group(0));
-						do {
-							if (paragraph.find()) {
-								paragraph.group(0);
-								paragraphIndexer--;
-							}
-						} while (paragraphIndexer > 0);
-						while (paragraph.find()) {
-							col.add(paragraph.group(0).replaceAll("<.*?>", ""));
-						}
 					}
+					paragraph = SOP.fb2Paragraph.matcher(section.group(0));
+					while (paragraphIndexer > 0) {
+						if (paragraph.find()) {
+							paragraph.group(0);
+							paragraphIndexer--;
+						}
+					} 
+					while (paragraph.find()) {
+						col.add(paragraph.group(0).replaceAll("<.*?>", ""));
+					}
+
 				}
 
 			}

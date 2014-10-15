@@ -34,10 +34,6 @@ public class EBook {
 	 */
 	public List<String> fb2Genres;
 	/**
-	 * Genre of the book according to ePub format
-	 */
-	public List<String> epubGenres;
-	/**
 	 * the language in which the e-book was published
 	 */
 	public String language;
@@ -76,7 +72,6 @@ public class EBook {
 	public EBook() {
 		this.authors = new ArrayList<Person>(3);
 		this.fb2Genres = new ArrayList<String>(2);
-		this.epubGenres = new ArrayList<String>(2);
 		this.translators = new ArrayList<Person>(2);
 		this.isOk = false;
 	}
