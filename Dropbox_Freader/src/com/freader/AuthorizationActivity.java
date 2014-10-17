@@ -26,12 +26,9 @@
 package com.freader;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -39,11 +36,10 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.dropbox.client2.DropboxAPI;
@@ -62,6 +58,7 @@ public class AuthorizationActivity extends Activity {
 	final static private String ACCESS_SECRET_NAME = "ACCESS_SECRET";
 
 	private static final boolean USE_OAUTH1 = false;
+	private static final int PICKFILE_RESULT_CODE = 1;
 
 	DropboxAPI<AndroidAuthSession> mApi;
 
@@ -69,6 +66,7 @@ public class AuthorizationActivity extends Activity {
 
 	// Android widgets
 	private Button mSubmit;
+	private Button mUpload;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +102,26 @@ public class AuthorizationActivity extends Activity {
 		});
 		// Display the proper UI state if logged in or not
 		setLoggedIn(mApi.getSession().isLinked());
+
+		mUpload = (Button) findViewById(R.id.upload_button);
+		mUpload.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				Intent pickerIntent = new Intent(AuthorizationActivity.this,
+						BookPickerActivity.class);
+				startActivityForResult(pickerIntent, PICKFILE_RESULT_CODE);
+			}
+		});
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case PICKFILE_RESULT_CODE:
+				String mFilePath = data.getStringExtra("filePickerPath");
+				Log.e(mFilePath, "was choosen");
+				//TODO call upload async task
+			break;
+		}
 	}
 
 	private void createFolder() {
@@ -162,10 +180,6 @@ public class AuthorizationActivity extends Activity {
 			mSubmit.setText("Unlink from Dropbox");
 			FragmentTransaction transaction = getFragmentManager()
 					.beginTransaction();
-			// Toast ph = Toast.makeText(this,
-			// Environment.getExternalStorageDirectory() + "/FReader/Books",
-			// Toast.LENGTH_LONG);
-			// ph.show();
 			transaction.add(R.id.books_fragment, new BookCollectionFragment(
 					mApi, Environment.getExternalStorageDirectory()
 							+ "/FReader/Books"));
