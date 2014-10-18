@@ -9,7 +9,6 @@ import android.util.Log;
 import android.widget.TextView;
 import android.os.AsyncTask;
 import android.util.Log;
-import java.util.HashMap;
 
 public class BookFetchAsync extends AsyncTask<ParsedBook, Integer, PagedBook> {
 
@@ -18,7 +17,6 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Integer, PagedBook> {
 	@Override
 	protected PagedBook doInBackground(ParsedBook... params) {
 		ArrayList<String> pages = new ArrayList<String>();
-		HashMap<Integer, Integer> hm = new HashMap<Integer, Integer>();
 		int start_paragraph = 0;
 		String page = new String();
 		String add = " ", previous = add;
@@ -26,7 +24,6 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Integer, PagedBook> {
 		ArrayList<String> words;
 		int p = 0;
 		for (int k = start_paragraph; k < params[0].paragraphs.size(); k++) { // Start walking through paragraphs
-			hm.put(k, p);
 			words = getWordList(params[0].paragraphs.get(k)); // Split a paragraph to words
 			for (int i = 0; i < words.size(); i++) {
 				add += " " + words.get(i); // Add a word each time

@@ -1,8 +1,9 @@
 package com.freader.bookprototype;
 
 import android.view.View;
+import android.support.v4.view.*;
 
-public class ZoomOutPageTransformer { //implements ViewPager.PageTransformer
+public class ZoomOutPageTransformer implements ViewPager.PageTransformer{
     private static final float MIN_SCALE = 0.85f;
     private static final float MIN_ALPHA = 0.5f;
 

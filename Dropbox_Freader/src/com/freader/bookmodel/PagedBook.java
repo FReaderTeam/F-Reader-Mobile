@@ -1,13 +1,11 @@
 package com.freader.bookmodel;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class PagedBook extends Book {
 
 	private ArrayList<String> pages;
 	private int current_page;
-	private HashMap<Integer, Integer> paragraphs_to_pages;
 	
 	public PagedBook(String t, String a, ArrayList<String> p) {
 		super(t, a);
@@ -17,10 +15,6 @@ public class PagedBook extends Book {
 	
 	public int getPagesNum(){
 		return pages.size();
-	}
-	
-	public HashMap<Integer, Integer> getHashMap(){
-		return paragraphs_to_pages;
 	}
 	
 	public ArrayList<String> getPages(){
