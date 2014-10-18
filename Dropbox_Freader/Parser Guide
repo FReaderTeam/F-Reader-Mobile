@@ -1,0 +1,21 @@
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import ebook.*;
+import ebook.parser.*;
+		
+	Parser parser = new InstantParser();
+	EBook ebook = parser.parse("filepath");
+	ArrayList<String> arr = new ArrayList<>();
+	if (ebook.isOk) {
+		try {
+			arr = parser.getBookBody();
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		}
+	}
+	
+	
+TAGS:
+%new-section
+%title
