@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -146,6 +147,7 @@ public class AuthorizationActivity extends Activity {
 		clearKeys();
 		// Change UI state to display logged out version
 		setLoggedIn(false);
+		
 	}
 
 	/**

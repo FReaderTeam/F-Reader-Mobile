@@ -1,10 +1,8 @@
-
 package ebook.parser;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -19,29 +17,12 @@ public class InstantParser extends ebook.parser.Parser {
 		if (SOP.fb2File.matcher(this.eBook.fileName).matches()) {
 			this.eBook.format = EBookFormat.FB2;
 			this.parseFb2();
-		}
-		if (SOP.fb2zipFile.matcher(this.eBook.fileName).matches()) {
+		} else if (SOP.fb2zipFile.matcher(this.eBook.fileName).matches()) {
 			this.eBook.format = EBookFormat.FB2;
 			this.parseFb2Zip();
 		} else {
 			this.eBook.format = EBookFormat.UNSUPPORTED;
 		}
-	}
-
-	public ArrayList<String> getBookBody() throws IOException {
-
-		InputStream inputStream = new FileInputStream(this.eBook.fileName);
-		try {
-			Fb2InstantParser parser = new Fb2InstantParser(this.eBook,
-					inputStream);
-			return parser.getBookBody();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			inputStream.close();
-		}
-		return null;
-
 	}
 
 	private void parseFb2() {
@@ -50,9 +31,9 @@ public class InstantParser extends ebook.parser.Parser {
 			Fb2InstantParser parser = new Fb2InstantParser(this.eBook,
 					inputStream);
 			parser.parse();
+			this.eBook.parsedBook = parser.getBookBody();
 			inputStream.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -65,11 +46,12 @@ public class InstantParser extends ebook.parser.Parser {
 			Fb2InstantParser parser = new Fb2InstantParser(this.eBook,
 					inputStream);
 			parser.parse();
+			this.eBook.parsedBook = parser.getBookBody();
 			inputStream.close();
 			zipFile.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+
 }

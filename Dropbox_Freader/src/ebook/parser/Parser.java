@@ -1,10 +1,6 @@
 
 package ebook.parser;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import ebook.EBook;
 
 /**
@@ -21,8 +17,8 @@ abstract public class Parser {
 	 * @return - instance of the class EBook with the fields filled with e-book
 	 *         meta-information
 	 */
-	public EBook parse(String fileName) {
-		return this.parse(fileName, false);
+	public void parse(String fileName) {
+		this.parse(fileName, false);
 	}
 
 	/**
@@ -30,19 +26,15 @@ abstract public class Parser {
 	 * @param extractCover
 	 * @return
 	 */
-	public EBook parse(String fileName, boolean extractCover) {
+	public void parse(String fileName, boolean extractCover) {
 		this.eBook = new EBook();
 		this.eBook.fileName = fileName;
 		this.eBook.doExtractCover = extractCover;
 		this.eBook.isOk = false;
 		this.parseFile();
-		return this.eBook;
 	}
 
 	abstract protected void parseFile();
-
-	abstract public ArrayList<String> getBookBody()
-			throws FileNotFoundException, IOException;
 
 	/**
 	 * Returns instance of the class EBook with the fields filled with e-book

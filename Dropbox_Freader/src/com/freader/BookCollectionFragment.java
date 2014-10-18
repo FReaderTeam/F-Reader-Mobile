@@ -1,13 +1,21 @@
 package com.freader;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.util.Log;
+
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,22 +89,23 @@ public class BookCollectionFragment extends Fragment {
 				android.R.layout.simple_list_item_1, fileNames);
 		mBookListView.setAdapter(adapter);
 	}
-	
-public void callbackDBTask(String bookPath) {
-		// TODO parse
-		Parser parser = new InstantParser();
-		EBook ebook = parser.parse(bookPath);
-		ArrayList<String> arr = new ArrayList<String>();
-		if (ebook.isOk) {
-			try {
-				arr = parser.getBookBody();
-			} catch (FileNotFoundException e) {
-			} catch (IOException e) {
-			}
-			String name = ebook.authors.get(0).firstName + " " + ebook.authors.get(0).middleName + " " + ebook.authors.get(0).lastName;
-			a_activity.startPageActivity(name, ebook.title, arr);
-		}
 
+	public void callbackDBTask(String bookPath) {
+		// TODO parse
+		AsyncParser ap = new AsyncParser();
+		ap.execute(bookPath);
+		EBook ebook = new EBook();
+		try {
+			ebook = ap.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		String name = ebook.authors.get(0).firstName + " "
+				+ ebook.authors.get(0).middleName + " "
+				+ ebook.authors.get(0).lastName;
+		a_activity.startPageActivity(name, ebook.title, ebook.parsedBook);
 	}
 
 	public void onDropboxUnlinkedException() {
@@ -130,5 +139,31 @@ public void callbackDBTask(String bookPath) {
 
 	public void onCancelled() {
 
+	}
+
+	private class AsyncParser extends AsyncTask<String, Boolean, EBook> {
+		private ProgressDialog progressDialog;
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			progressDialog = new ProgressDialog(getActivity());
+			progressDialog.setMessage("Opening book. Please wait...");
+			progressDialog.setIndeterminate(true);
+			progressDialog.show();
+		}
+
+		@Override
+		protected EBook doInBackground(String... params) {
+			Parser parser = new InstantParser();
+			parser.parse(params[0]);
+			return parser.getEBoook();
+		}
+
+		@Override
+		protected void onPostExecute(EBook result) {
+			super.onPostExecute(result);
+			progressDialog.hide();
+		}
 	}
 }
