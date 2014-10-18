@@ -17,9 +17,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.dropbox.client2.DropboxAPI;
+import com.dropbox.client2.DropboxAPI.Entry;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.android.AuthActivity;
 import com.dropbox.client2.session.AccessTokenPair;
@@ -55,40 +57,7 @@ public class AuthorizationActivity extends Activity {
 		mApi = new DropboxAPI<AndroidAuthSession>(session);
 
 		// Basic Android widgets
-		setContentView(R.layout.login_activity);
-
-		checkAppKeySetup();
-
-		mSubmit = (Button) findViewById(R.id.auth_button);
-
-		mSubmit.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				// This logs you out if you're logged in, or vice versa
-				if (mLoggedIn) {
-					logOut();
-				} else {
-					// Start the remote authentication
-					if (USE_OAUTH1) {
-						mApi.getSession().startAuthentication(
-								AuthorizationActivity.this);
-					} else {
-						mApi.getSession().startOAuth2Authentication(
-								AuthorizationActivity.this);
-					}
-				}
-			}
-		});
-		// Display the proper UI state if logged in or not
-		setLoggedIn(mApi.getSession().isLinked());
-
-		mUpload = (Button) findViewById(R.id.upload_button);
-		mUpload.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				Intent pickerIntent = new Intent(AuthorizationActivity.this,
-						BookPickerActivity.class);
-				startActivityForResult(pickerIntent, PICKFILE_RESULT_CODE);
-			}
-		});
+		setClearListView();
 	}
 
 	@Override
@@ -147,9 +116,46 @@ public class AuthorizationActivity extends Activity {
 		clearKeys();
 		// Change UI state to display logged out version
 		setLoggedIn(false);
-		
+		setClearListView();
 	}
 
+	private void setClearListView(){
+		setContentView(R.layout.login_activity);
+
+		checkAppKeySetup();
+
+		mSubmit = (Button) findViewById(R.id.auth_button);
+
+		mSubmit.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				// This logs you out if you're logged in, or vice versa
+				if (mLoggedIn) {
+					logOut();
+				} else {
+					// Start the remote authentication
+					if (USE_OAUTH1) {
+						mApi.getSession().startAuthentication(
+								AuthorizationActivity.this);
+					} else {
+						mApi.getSession().startOAuth2Authentication(
+								AuthorizationActivity.this);
+					}
+				}
+			}
+		});
+		// Display the proper UI state if logged in or not
+		setLoggedIn(mApi.getSession().isLinked());
+
+		mUpload = (Button) findViewById(R.id.upload_button);
+		mUpload.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				Intent pickerIntent = new Intent(AuthorizationActivity.this,
+						BookPickerActivity.class);
+				startActivityForResult(pickerIntent, PICKFILE_RESULT_CODE);
+			}
+		});
+	}
+	
 	/**
 	 * Convenience function to change UI state based on being logged in
 	 */
@@ -159,9 +165,10 @@ public class AuthorizationActivity extends Activity {
 			mSubmit.setText("Unlink from Dropbox");
 			FragmentTransaction transaction = getFragmentManager()
 					.beginTransaction();
-			transaction.add(R.id.books_fragment, new BookCollectionFragment(
+			BookCollectionFragment bcf = new BookCollectionFragment(
 					mApi, Environment.getExternalStorageDirectory()
-							+ "/FReader/Books", this));
+					+ "/FReader/Books", this);
+			transaction.add(R.id.books_fragment, bcf);
 			transaction.commit();
 		} else {
 			mSubmit.setText("Link with Dropbox");
