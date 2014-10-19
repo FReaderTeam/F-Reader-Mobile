@@ -1,7 +1,9 @@
 package com.freader.bookmodel;
 
+import java.util.HashMap;
 import java.util.ArrayList;
 
+import java.util.HashMap;
 import com.freader.bookprototype.ScreenSlideActivity;
 import com.freader.bookprototype.ScreenSlideWaiting;
 
@@ -14,6 +16,8 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Integer, PagedBook> {
 
 	private ScreenSlideWaiting activity;
 
+	
+	
 	@Override
 	protected PagedBook doInBackground(ParsedBook... params) {
 		ArrayList<String> pages = new ArrayList<String>();
@@ -23,7 +27,9 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Integer, PagedBook> {
 		int lines = 0;
 		ArrayList<String> words;
 		int p = 0;
+		HashMap<Integer, Integer> hm = new HashMap<Integer, Integer>();
 		for (int k = start_paragraph; k < params[0].paragraphs.size(); k++) { // Start walking through paragraphs
+			hm.put(k, p);
 			words = getWordList(params[0].paragraphs.get(k)); // Split a paragraph to words
 			for (int i = 0; i < words.size(); i++) {
 				add += " " + words.get(i); // Add a word each time
@@ -63,7 +69,7 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Integer, PagedBook> {
 		Log.w("BookFetch", "Fetched, Pages num: " + String.valueOf(p));
 		activity = params[0].activity;
 
-		return new PagedBook(params[0].getAuthor(), params[0].getTitle(), pages);
+		return new PagedBook(params[0].getAuthor(), params[0].getTitle(), pages, hm);
 	}
 
 	private ArrayList<String> getWordList(String line) {

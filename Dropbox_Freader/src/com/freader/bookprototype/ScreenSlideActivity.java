@@ -25,6 +25,7 @@ import com.freader.*;
 import com.freader.bookmodel.PagedBook;
 import com.freader.bookmodel.PagedBookListener;
 import com.freader.bookmodel.ParsedBook;
+import java.util.HashMap;
 
 public class ScreenSlideActivity extends FragmentActivity {
 
@@ -38,6 +39,7 @@ public class ScreenSlideActivity extends FragmentActivity {
     private SeekBar seekBar;
     private TextView progressTextView;
     private TextView authorAndTitleTextView;
+    private HashMap<Integer, Integer> paragraphs_to_pages;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class ScreenSlideActivity extends FragmentActivity {
         mPager.setPageTransformer(true, new ZoomOutPageTransformer());
         title = getIntent().getStringExtra("title");
         author = getIntent().getStringExtra("name");
+        paragraphs_to_pages = (HashMap<Integer, Integer>) getIntent().getSerializableExtra("pHashMap");
         att = (ArrayList<String>) getIntent().getSerializableExtra("book");
         numberOfPages = getIntent().getIntExtra("pagesNumber", 0);
         numbersOfPageForProgressTextView = numberOfPages - 1;
