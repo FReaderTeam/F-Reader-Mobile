@@ -59,10 +59,12 @@ public class BookCollectionFragment extends Fragment {
 			@Override
 			public void onItemClick(AdapterView<?> a, View v, int position,
 					long id) {
+				mBooks.get(position).fileName();
 				Object obj = mBookListView.getItemAtPosition(position);
 				String obj_itemDetails = (String) obj;
-				new DownloadBookTask(getActivity(), mApi, obj_itemDetails,
-						mAppPath, BookCollectionFragment.this).execute();
+				new DownloadBookTask(getActivity(), mApi, mBooks.get(position)
+						.fileName(), mBooks.get(position).path, mAppPath,
+						BookCollectionFragment.this).execute();
 			}
 		});
 		return view;

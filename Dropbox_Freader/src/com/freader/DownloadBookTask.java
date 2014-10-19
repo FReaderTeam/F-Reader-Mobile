@@ -29,18 +29,19 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 	private boolean mCanceled;
 	private String mErrorMsg;
 	private String mBookName;
+	private String mBookPath;
 	private String appFolderPath;
 	private BookCollectionFragment fragment;
 
-	@SuppressWarnings("deprecation")
 	public DownloadBookTask(Context context, DropboxAPI<?> api,
-			String bookName, String appPath, BookCollectionFragment f) {
+			String bookName, String bookPath, String appPath, BookCollectionFragment f) {
 		mContext = context.getApplicationContext();
 		mBookName = bookName;
+		mBookPath = bookPath;
 		mApi = api;
 		appFolderPath = appPath;
 		fragment = f;
-
+		showToast(bookName);
 		mDialog = new ProgressDialog(context);
 		mDialog.setMessage("Downloading");
 		mDialog.setButton("Cancel", new OnClickListener() {
@@ -67,7 +68,7 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 			Log.i("AppFolderPath", "path" + appFolderPath);
 			FileOutputStream outputStream = new FileOutputStream(file);
 			// And downloading book into this file
-			DropboxFileInfo info = mApi.getFile(mBookName, null, outputStream,
+			DropboxFileInfo info = mApi.getFile(mBookPath, null, outputStream,
 					null);
 			// TODO delete this
 			Log.i("DownloadingLog", "downloading" + info.getMetadata().path);
@@ -76,6 +77,7 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 		} catch (DropboxPartialFileException e) {
 			// We canceled the operation
 			mErrorMsg = "Download canceled";
+			return false;
 		} catch (DropboxServerException e) {
 			// Server-side exception. These are examples of what could happen,
 			// but we don't do anything special with them here.
@@ -102,20 +104,24 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 			mErrorMsg = e.body.userError;
 			if (mErrorMsg == null) {
 				mErrorMsg = e.body.error;
+				return false;
 			}
 		} catch (DropboxIOException e) {
 			// Happens all the time, probably want to retry automatically.
 			mErrorMsg = "Network error.  Try again.";
+			return false;
 		} catch (DropboxParseException e) {
 			// Probably due to Dropbox server restarting, should retry
 			mErrorMsg = "Dropbox error.  Try again.";
+			return false;
 		} catch (DropboxException e) {
 			// Unknown error
 			mErrorMsg = "Unknown error.  Try again.";
+			return false;
 		} catch (FileNotFoundException e) {
 			mErrorMsg = "File not found.";
 			e.printStackTrace();
-			// throws when downloading has been cancelled
+			return false;
 		}
 		return true;
 	}
