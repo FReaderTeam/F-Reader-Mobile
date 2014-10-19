@@ -36,7 +36,8 @@ public class ScreenSlideActivity extends FragmentActivity {
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
     private SeekBar seekBar;
-    private TextView progressTextView;    
+    private TextView progressTextView;
+    private TextView authorAndTitleTextView;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,8 @@ public class ScreenSlideActivity extends FragmentActivity {
         mPager.setAdapter(mPagerAdapter);
         seekBar = (SeekBar)findViewById(R.id.seekBarProgress);
         progressTextView = (TextView)findViewById(R.id.textViewProgress);
+        authorAndTitleTextView = (TextView)findViewById(R.id.textViewAuthorAndTitle);
+        authorAndTitleTextView.setText(author + " " + title);
         mPager.setOnPageChangeListener(new OnPageChangeListener() {
 
             @Override
@@ -107,11 +110,6 @@ public class ScreenSlideActivity extends FragmentActivity {
         @Override
         public int getCount() {
             return numberOfPages;
-        }
-        
-        @Override
-        public CharSequence getPageTitle(int position) {
-        	return author + " " + title;
         }
     }
     

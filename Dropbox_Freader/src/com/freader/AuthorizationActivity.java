@@ -13,11 +13,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dropbox.client2.DropboxAPI;
@@ -45,8 +48,8 @@ public class AuthorizationActivity extends Activity {
 	private boolean mLoggedIn;
 
 	// Android widgets
-	private Button mSubmit;
-	private Button mUpload;
+	private Menu menu;
+	private TextView listOfBooks;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +58,47 @@ public class AuthorizationActivity extends Activity {
 		// We create a new AuthSession so that we can use the Dropbox API.
 		AndroidAuthSession session = buildSession();
 		mApi = new DropboxAPI<AndroidAuthSession>(session);
-
+		
 		// Basic Android widgets
 		setClearListView();
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		this.menu = menu;
+		getMenuInflater().inflate(R.menu.main, menu);
+		setLoggedIn(mApi.getSession().isLinked());
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.mSubmit:
+				if (mLoggedIn) {
+					logOut();
+				} else {
+					// Start the remote authentication
+					if (USE_OAUTH1) {
+						mApi.getSession().startAuthentication(
+								AuthorizationActivity.this);
+					} else {
+						mApi.getSession().startOAuth2Authentication(
+								AuthorizationActivity.this);
+					}
+				}
+				return true;
+			case R.id.mUpload:
+				Intent pickerIntent = new Intent(AuthorizationActivity.this,
+						BookPickerActivity.class);
+				startActivityForResult(pickerIntent, PICKFILE_RESULT_CODE);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
@@ -121,39 +160,8 @@ public class AuthorizationActivity extends Activity {
 
 	private void setClearListView(){
 		setContentView(R.layout.login_activity);
-
+		listOfBooks = (TextView)findViewById(R.id.list_of_books);
 		checkAppKeySetup();
-
-		mSubmit = (Button) findViewById(R.id.auth_button);
-
-		mSubmit.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				// This logs you out if you're logged in, or vice versa
-				if (mLoggedIn) {
-					logOut();
-				} else {
-					// Start the remote authentication
-					if (USE_OAUTH1) {
-						mApi.getSession().startAuthentication(
-								AuthorizationActivity.this);
-					} else {
-						mApi.getSession().startOAuth2Authentication(
-								AuthorizationActivity.this);
-					}
-				}
-			}
-		});
-		// Display the proper UI state if logged in or not
-		setLoggedIn(mApi.getSession().isLinked());
-
-		mUpload = (Button) findViewById(R.id.upload_button);
-		mUpload.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				Intent pickerIntent = new Intent(AuthorizationActivity.this,
-						BookPickerActivity.class);
-				startActivityForResult(pickerIntent, PICKFILE_RESULT_CODE);
-			}
-		});
 	}
 	
 	/**
@@ -162,16 +170,17 @@ public class AuthorizationActivity extends Activity {
 	private void setLoggedIn(boolean loggedIn) {
 		mLoggedIn = loggedIn;
 		if (loggedIn) {
-			mSubmit.setText("Unlink from Dropbox");
+			menu.getItem(0).setTitle("Unlink from Dropbox");
+			listOfBooks.setText("List of books:");
 			FragmentTransaction transaction = getFragmentManager()
 					.beginTransaction();
-			BookCollectionFragment bcf = new BookCollectionFragment(
+			transaction.add(R.id.books_fragment, new BookCollectionFragment(
 					mApi, Environment.getExternalStorageDirectory()
-					+ "/FReader/Books", this);
-			transaction.add(R.id.books_fragment, bcf);
+							+ "/FReader/Books", this));
 			transaction.commit();
 		} else {
-			mSubmit.setText("Link with Dropbox");
+			menu.getItem(0).setTitle("Link from Dropbox");
+			listOfBooks.setText(" ");
 		}
 	}
 
