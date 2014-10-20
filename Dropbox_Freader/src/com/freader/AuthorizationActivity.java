@@ -260,11 +260,12 @@ public class AuthorizationActivity extends Activity {
 		}
 	}
 
-	void startPageActivity(String title, String name, ArrayList<String> arr){
+	void startPageActivity(String path, String title, String name, ArrayList<String> arr){
 		Intent intent = new Intent(this, ScreenSlideWaiting.class);
 		intent.putExtra("title", title);
 		intent.putExtra("name", name);
 		intent.putExtra("book", arr);
+		intent.putExtra("path", path);
 		Log.w("Test", "Before activity call");
 		startActivity(intent);
 	}

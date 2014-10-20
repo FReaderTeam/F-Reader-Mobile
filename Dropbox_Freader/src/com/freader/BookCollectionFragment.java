@@ -107,7 +107,7 @@ public class BookCollectionFragment extends Fragment {
 		String name = ebook.authors.get(0).firstName + " "
 				+ ebook.authors.get(0).middleName + " "
 				+ ebook.authors.get(0).lastName;
-		a_activity.startPageActivity(name, ebook.title, ebook.parsedBook);
+		a_activity.startPageActivity(bookPath, name, ebook.title, ebook.parsedBook);
 	}
 
 	public void onDropboxUnlinkedException() {
