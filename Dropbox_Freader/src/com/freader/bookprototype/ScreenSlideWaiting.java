@@ -29,6 +29,7 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.w("SSW","SSW");
         setContentView(R.layout.waiting_screen_slide);
 		title = getIntent().getStringExtra("title");
         author = getIntent().getStringExtra("name");

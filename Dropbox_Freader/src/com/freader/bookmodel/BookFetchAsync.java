@@ -45,10 +45,8 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Integer, PagedBook> {
 					}
 					else{
 						lines++;
-						//page += add; //WORDS GET NOT COUNTED
 						page += previous;
 						add = "";
-						previous = "";
 					}
 				}
 				previous = add;
@@ -60,13 +58,19 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Integer, PagedBook> {
 				lines++;
 				continue;
 			} else { // If there isn't, initialize new page
+				page+=add;
 				pages.add(page);
 				p++;
 				page = new String();
 				lines = 0;
 			}
+			
 		}
-		Log.w("BookFetch", "Fetched, Pages num: " + String.valueOf(p));
+		if (page!=""){
+			pages.add(page);
+			p++;
+		}
+		Log.w("BookFetch", "Fetched, last page " + pages.get(pages.size()-1));
 		activity = params[0].activity;
 
 		return new PagedBook(params[0].getAuthor(), params[0].getTitle(), pages, hm);
