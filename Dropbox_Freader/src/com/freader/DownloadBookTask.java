@@ -3,15 +3,8 @@ package com.freader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-
-import com.dropbox.client2.DropboxAPI;
-import com.dropbox.client2.DropboxAPI.DropboxFileInfo;
-import com.dropbox.client2.exception.DropboxException;
-import com.dropbox.client2.exception.DropboxIOException;
-import com.dropbox.client2.exception.DropboxParseException;
-import com.dropbox.client2.exception.DropboxPartialFileException;
-import com.dropbox.client2.exception.DropboxServerException;
-import com.dropbox.client2.exception.DropboxUnlinkedException;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -21,27 +14,35 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.dropbox.sync.android.DbxAccountManager;
+import com.dropbox.sync.android.DbxException;
+import com.dropbox.sync.android.DbxException.Unauthorized;
+import com.dropbox.sync.android.DbxFile;
+import com.dropbox.sync.android.DbxFileInfo;
+import com.dropbox.sync.android.DbxFileSystem;
+import com.dropbox.sync.android.DbxPath;
+
 public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 
 	private Context mContext;
 	private final ProgressDialog mDialog;
-	private DropboxAPI<?> mApi;
+	// private DropboxAPI<?> mApi;
 	private boolean mCanceled;
 	private String mErrorMsg;
 	private String mBookName;
-	private String mBookPath;
+	private DbxPath mBookPath;
 	private String appFolderPath;
 	private BookCollectionFragment fragment;
+	DbxAccountManager mDbxAcctMgr;
 
-	public DownloadBookTask(Context context, DropboxAPI<?> api,
-			String bookName, String bookPath, String appPath, BookCollectionFragment f) {
+	public DownloadBookTask(Context context, String bookName, DbxPath bookPath,
+			String appPath, BookCollectionFragment f) {
 		mContext = context.getApplicationContext();
 		mBookName = bookName;
 		mBookPath = bookPath;
-		mApi = api;
+		mDbxAcctMgr = f.getAccountManager();
 		appFolderPath = appPath;
 		fragment = f;
-		showToast(bookName);
 		mDialog = new ProgressDialog(context);
 		mDialog.setMessage("Downloading");
 		mDialog.setButton("Cancel", new OnClickListener() {
@@ -58,70 +59,34 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 
 	@Override
 	protected Boolean doInBackground(Void... params) {
+		File file = new File(appFolderPath + "/" + mBookName);
+		DbxFile testFile = null;
 		try {
-			if (mCanceled) {
-				return false;
-			}
-			// Creating new file
-			File file = new File(appFolderPath + "/" + mBookName);
-			// TODO delete this
-			Log.i("AppFolderPath", "path" + appFolderPath);
-			FileOutputStream outputStream = new FileOutputStream(file);
-			// And downloading book into this file
-			DropboxFileInfo info = mApi.getFile(mBookPath, null, outputStream,
-					null);
-			// TODO delete this
-			Log.i("DownloadingLog", "downloading" + info.getMetadata().path);
-		} catch (DropboxUnlinkedException e) {
-			// The AuthSession wasn't properly authenticated or user unlinked.
-		} catch (DropboxPartialFileException e) {
-			// We canceled the operation
-			mErrorMsg = "Download canceled";
-			return false;
-		} catch (DropboxServerException e) {
-			// Server-side exception. These are examples of what could happen,
-			// but we don't do anything special with them here.
-			if (e.error == DropboxServerException._304_NOT_MODIFIED) {
-				// won't happen since we don't pass in revision with metadata
-			} else if (e.error == DropboxServerException._401_UNAUTHORIZED) {
-				// Unauthorized, so we should unlink them. You may want to
-				// automatically log the user out in this case.
-			} else if (e.error == DropboxServerException._403_FORBIDDEN) {
-				// Not allowed to access this
-			} else if (e.error == DropboxServerException._404_NOT_FOUND) {
-				// path not found (or if it was the thumbnail, can't be
-				// thumbnailed)
-			} else if (e.error == DropboxServerException._406_NOT_ACCEPTABLE) {
-				// too many entries to return
-			} else if (e.error == DropboxServerException._415_UNSUPPORTED_MEDIA) {
-				// can't be thumbnailed
-			} else if (e.error == DropboxServerException._507_INSUFFICIENT_STORAGE) {
-				// user is over quota
-			} else {
-				// Something else
-			}
-			// This gets the Dropbox error, translated into the user's language
-			mErrorMsg = e.body.userError;
-			if (mErrorMsg == null) {
-				mErrorMsg = e.body.error;
-				return false;
-			}
-		} catch (DropboxIOException e) {
-			// Happens all the time, probably want to retry automatically.
-			mErrorMsg = "Network error.  Try again.";
-			return false;
-		} catch (DropboxParseException e) {
-			// Probably due to Dropbox server restarting, should retry
-			mErrorMsg = "Dropbox error.  Try again.";
-			return false;
-		} catch (DropboxException e) {
-			// Unknown error
-			mErrorMsg = "Unknown error.  Try again.";
-			return false;
+			DbxFileSystem sys = DbxFileSystem.forAccount(mDbxAcctMgr
+					.getLinkedAccount());
+			testFile = sys.open(mBookPath);
+			String contents = testFile.readString();
+			// write string to file
+			FileWriter writer = new FileWriter(file);
+			writer.write(contents);
+			writer.close();
 		} catch (FileNotFoundException e) {
-			mErrorMsg = "File not found.";
 			e.printStackTrace();
 			return false;
+		} catch (Unauthorized e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (DbxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} finally {
+			testFile.close();
 		}
 		return true;
 	}

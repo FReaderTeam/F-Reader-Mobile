@@ -25,9 +25,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.dropbox.client2.DropboxAPI;
-import com.dropbox.client2.DropboxAPI.Entry;
-import com.dropbox.client2.android.AndroidAuthSession;
+import com.dropbox.sync.android.DbxAccountManager;
+import com.dropbox.sync.android.DbxFile;
+import com.dropbox.sync.android.DbxFileInfo;
+import com.dropbox.sync.android.DbxFileSystem;
+import com.dropbox.sync.android.DbxPath;
 import com.freader.bookmodel.ParsedBook;
 import com.freader.bookprototype.ScreenSlideActivity;
 import ebook.*;
@@ -36,14 +38,15 @@ import ebook.parser.*;
 public class BookCollectionFragment extends Fragment {
 
 	private ListView mBookListView;
-	private List<Entry> mBooks;
-	private DropboxAPI<AndroidAuthSession> mApi;
+	private List<DbxFileInfo> mBooks;
+
+	DbxAccountManager mDbxAcctMgr;
 	private String mAppPath;
 	private AuthorizationActivity a_activity;
 
-	public BookCollectionFragment(DropboxAPI<AndroidAuthSession> mApi,
-			String path, AuthorizationActivity a_activity) {
-		this.mApi = mApi;
+	public BookCollectionFragment(DbxAccountManager mDbxAcctMgr, String path,
+			AuthorizationActivity a_activity) {
+		this.mDbxAcctMgr = mDbxAcctMgr;
 		this.mAppPath = path;
 		this.a_activity = a_activity;
 	}
@@ -54,24 +57,25 @@ public class BookCollectionFragment extends Fragment {
 		View view = inflater
 				.inflate(R.layout.book_collection, container, false);
 		mBookListView = (ListView) view.findViewById(R.id.book_list);
-
 		mBookListView.setOnItemClickListener(new OnItemClickListener() {
+
 			@Override
 			public void onItemClick(AdapterView<?> a, View v, int position,
 					long id) {
-				mBooks.get(position).fileName();
+				mBooks.get(position).path.getName();
 				Object obj = mBookListView.getItemAtPosition(position);
 				String obj_itemDetails = (String) obj;
-				new DownloadBookTask(getActivity(), mApi, mBooks.get(position)
-						.fileName(), mBooks.get(position).path, mAppPath,
+				new DownloadBookTask(getActivity(), mBooks.get(position).path
+						.getName(), mBooks.get(position).path, mAppPath,
 						BookCollectionFragment.this).execute();
 			}
 		});
+
 		return view;
 	}
 
-	public DropboxAPI<AndroidAuthSession> getDropboxAPI() {
-		return mApi;
+	protected DbxAccountManager getAccountManager() {
+		return this.mDbxAcctMgr;
 	}
 
 	@Override
@@ -80,11 +84,12 @@ public class BookCollectionFragment extends Fragment {
 		new GetBookListTask(BookCollectionFragment.this).execute();
 	}
 
-	public void setBooks(List<Entry> books) {
+	public void setBooks(List<DbxFileInfo> books) {
 		this.mBooks = books;
 		String[] fileNames = new String[mBooks.size()];
 		for (int i = 0; i < mBooks.size(); i++) {
-			fileNames[i] = mBooks.get(i).path;// TODO get pathes from somewhere
+			fileNames[i] = mBooks.get(i).path.getName();// TODO get pathes from
+														// somewhere
 			// else, like datastore
 		}
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
@@ -93,7 +98,7 @@ public class BookCollectionFragment extends Fragment {
 	}
 
 	public void callbackDBTask(String bookPath) {
-		// TODO parse
+		//parse
 		AsyncParser ap = new AsyncParser();
 		ap.execute(bookPath);
 		EBook ebook = new EBook();
@@ -107,36 +112,8 @@ public class BookCollectionFragment extends Fragment {
 		String name = ebook.authors.get(0).firstName + " "
 				+ ebook.authors.get(0).middleName + " "
 				+ ebook.authors.get(0).lastName;
-		a_activity.startPageActivity(bookPath, name, ebook.title, ebook.parsedBook);
-	}
-
-	public void onDropboxUnlinkedException() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onDropboxPartialFileException() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onDropboxServerException(String error) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onDropboxIOException() {
-		// TODO Auto-generated method stub
-	}
-
-	public void onDropboxParseException() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void onDropboxException() {
-		// TODO Auto-generated method stub
-
+		a_activity.startPageActivity(bookPath, name, ebook.title,
+				ebook.parsedBook);
 	}
 
 	public void onCancelled() {
