@@ -19,7 +19,7 @@ import com.freader.bookmodel.ParsedBook;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN) public class ScreenSlidePageFragment extends Fragment {
+public class ScreenSlidePageFragment extends Fragment {
 
 	private CharSequence text;
 	private TextView mainTextTextView;
