@@ -86,6 +86,8 @@ public class AuthorizationActivity extends Activity {
 			String mFilePath = data.getStringExtra("filePickerPath");
 			Log.e(mFilePath, "was choosen");
 			// TODO call upload async task
+			new UploadBookTask(AuthorizationActivity.this, "Book", mFilePath,
+					mDbxAcctMgr).execute();
 			break;
 		case REQUEST_LINK_TO_DBX:
 			mLoggedIn = true;
