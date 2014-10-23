@@ -60,16 +60,23 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 	@Override
 	protected Boolean doInBackground(Void... params) {
 		File file = new File(appFolderPath + "/" + mBookName);
+
 		DbxFile testFile = null;
 		try {
 			DbxFileSystem sys = DbxFileSystem.forAccount(mDbxAcctMgr
 					.getLinkedAccount());
 			testFile = sys.open(mBookPath);
 			String contents = testFile.readString();
-			// write string to file
-			FileWriter writer = new FileWriter(file);
-			writer.write(contents);
-			writer.close();
+			byte[] myBytes = null;
+			myBytes = contents.getBytes("UTF-8");
+			// writing to file
+			FileOutputStream fos = new FileOutputStream(file);
+			fos.write(myBytes);
+			fos.close();
+			/*
+			 * FileWriter writer = new FileWriter(file); writer.write(contents);
+			 * writer.close();
+			 */
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return false;
