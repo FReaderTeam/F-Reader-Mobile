@@ -15,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dropbox.sync.android.DbxAccountManager;
+import com.dropbox.sync.android.DbxDatastoreManager;
+import com.dropbox.sync.android.DbxException.Unauthorized;
 
 import com.freader.bookprototype.ScreenSlideWaiting;
 
@@ -23,6 +25,8 @@ public class AuthorizationActivity extends Activity {
 	final static private String appKey = "vahra3f0bhvq3pu";
 	final static private String appSecret = "4ubx866o44ayo0s";
 
+	public static DbxDatastoreManager dbxDatastoreManager;
+	
 	private static final int PICKFILE_RESULT_CODE = 1;
 
 	private static final int REQUEST_LINK_TO_DBX = 0;
@@ -40,10 +44,13 @@ public class AuthorizationActivity extends Activity {
 		// Basic Android widgets
 		setClearListView();
 		createFolder();
-
+		
+		
 		mDbxAcctMgr = DbxAccountManager.getInstance(getApplicationContext(),
 				appKey, appSecret);
 
+
+		
 		if (!mDbxAcctMgr.hasLinkedAccount())
 			mDbxAcctMgr.startLink((Activity) this, REQUEST_LINK_TO_DBX);
 
@@ -127,6 +134,13 @@ public class AuthorizationActivity extends Activity {
 	private void setLoggedIn(boolean loggedIn) {
 		mLoggedIn = loggedIn;
 		if (loggedIn) {
+			
+			try {
+				dbxDatastoreManager = DbxDatastoreManager.forAccount(mDbxAcctMgr.getLinkedAccount());
+			} catch (Unauthorized e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			menu.getItem(0).setTitle("Unlink from Dropbox");
 			listOfBooks.setText("List of books:");
 			FragmentTransaction transaction = getFragmentManager()

@@ -23,7 +23,6 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
     private String author;
     private String title;
     private CharSequence text;
-    private ViewTreeObserver observer;
     private int size;
     private String bookFullPath;
     

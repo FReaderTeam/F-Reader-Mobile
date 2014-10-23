@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
+import com.dropbox.sync.android.DbxException;
 import com.freader.*;
 import com.freader.bookmodel.PagedBook;
 import com.freader.bookmodel.PagedBookListener;
@@ -74,8 +75,19 @@ public class ScreenSlideActivity extends FragmentActivity {
         authorAndTitleTextView.setText(author + " " + title);
         
         // save and load page
-        positionDao = new PositionDao(ScreenSlideActivity.this);
-        firstPage = paragraphsToPages.get(positionDao.getPosition(bookFullPath));
+        
+        try {
+			positionDao = new PositionDao(AuthorizationActivity.dbxDatastoreManager);
+		} catch (DbxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        try {
+			firstPage = paragraphsToPages.get(positionDao.getPosition(bookFullPath));
+		} catch (DbxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         mPager.setCurrentItem(firstPage);
         seekBar.setProgress(firstPage);
         
@@ -131,7 +143,12 @@ public class ScreenSlideActivity extends FragmentActivity {
         	for (Map.Entry<Integer, Integer> entry : paragraphsToPages.entrySet())
         	{
         		if(position == entry.getValue()){
-        			positionDao.savePosition(bookFullPath, entry.getKey()); // Long - Int??
+        			try {
+						positionDao.savePosition(bookFullPath, entry.getKey());
+					} catch (DbxException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} // Long - Int??
         		}
         	    System.out.println(entry.getKey() + "/" + entry.getValue());
         	}
