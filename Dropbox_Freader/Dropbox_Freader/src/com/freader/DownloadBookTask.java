@@ -67,16 +67,14 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 					.getLinkedAccount());
 			testFile = sys.open(mBookPath);
 			String contents = testFile.readString();
-			byte[] myBytes = null;
+			/*byte[] myBytes = null;
 			myBytes = contents.getBytes("UTF-8");
 			// writing to file
 			FileOutputStream fos = new FileOutputStream(file);
 			fos.write(myBytes);
-			fos.close();
-			/*
-			 * FileWriter writer = new FileWriter(file); writer.write(contents);
-			 * writer.close();
-			 */
+			fos.close();*/
+			FileWriter writer = new FileWriter(file); writer.write(contents);
+			 writer.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			return false;
