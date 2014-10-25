@@ -1,6 +1,7 @@
 package com.freader.bookprototype;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.freader.AuthorizationActivity;
 import com.freader.R;
@@ -60,13 +61,13 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
 	}
 
 	@Override
-	public void callback(PagedBook pb) {
+	public void callback(ArrayList<CharSequence> pages, HashMap<Integer, Integer> hm) {
 		Intent intent = new Intent(this, ScreenSlideActivity.class);
-		intent.putExtra("title", pb.getTitle());
-		intent.putExtra("name", pb.getAuthor());
+		intent.putExtra("title", title);
+		intent.putExtra("name", author);
 		//intent.putExtra("book", pb.getPages());
-		intent.putExtra("pagesNumber", pb.getPagesNum());
-		intent.putExtra("pHashMap", pb.getHashMap());
+		intent.putExtra("pagesNumber", pages.size());
+		intent.putExtra("pHashMap", hm);
 		intent.putExtra("path", bookFullPath);
 		Log.w("Test", "Before activity call");
 		startActivity(intent);

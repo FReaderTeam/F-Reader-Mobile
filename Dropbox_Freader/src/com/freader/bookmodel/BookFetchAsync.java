@@ -7,33 +7,34 @@ import java.util.HashMap;
 import com.freader.bookprototype.ScreenSlideActivity;
 import com.freader.bookprototype.ScreenSlideWaiting;
 
+import android.text.SpannableString;
 import android.util.Log;
 import android.widget.TextView;
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class BookFetchAsync extends AsyncTask<ParsedBook, Integer, PagedBook> {
+@SuppressLint("UseSparseArrays") public class BookFetchAsync extends AsyncTask<ParsedBook, Void, ArrayList<CharSequence>> {
 
 	private ScreenSlideWaiting activity;
-
+	private HashMap<Integer, Integer> hm;
 	
 	
 	@Override
-	protected PagedBook doInBackground(ParsedBook... params) {
-		ArrayList<String> pages = new ArrayList<String>();
+	protected ArrayList<CharSequence> doInBackground(ParsedBook... params) {
+		ArrayList<CharSequence> pages = new ArrayList<CharSequence>();
 		int start_paragraph = 0;
 		String page = new String();
 		String add = " ", previous = add;
 		int lines = 0;
 		ArrayList<String> words;
 		int p = 0;
-		HashMap<Integer, Integer> hm = new HashMap<Integer, Integer>();
-		for (int k = start_paragraph; k < params[0].paragraphs.size(); k++) { // Start walking through paragraphs
+		hm = new HashMap<Integer, Integer>();
+		for (int k = start_paragraph; k < params[0].getParagraphs().size(); k++) { // Start walking through paragraphs
 			hm.put(k, p);
-			words = getWordList(params[0].paragraphs.get(k)); // Split a paragraph to words
+			words = getWordList(params[0].getParagraphs().get(k)); // Split a paragraph to words
 			for (int i = 0; i < words.size(); i++) {
 				add += " " + words.get(i); // Add a word each time
-				
 				if (isTooLarge(add, params[0].textView)) { // Check if the line is longer than the page width
 					if (lines == params[0].lines_num-1) { // If page is over, create new page
 						page += add;
@@ -73,7 +74,7 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Integer, PagedBook> {
 		Log.w("BookFetch", "Fetched, last page " + pages.get(pages.size()-1));
 		activity = params[0].activity;
 
-		return new PagedBook(params[0].getAuthor(), params[0].getTitle(), pages, hm);
+		return pages;
 	}
 
 	private ArrayList<String> getWordList(String line) {
@@ -105,9 +106,9 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Integer, PagedBook> {
 		return false;
 	}
 
-	protected void onPostExecute(PagedBook pb) {
+	protected void onPostExecute(ArrayList<CharSequence> pages) {
 		Log.w("com.freader", "Book fetched");
-		activity.callback(pb);
+		activity.callback(pages, hm);
 	}
 
 }

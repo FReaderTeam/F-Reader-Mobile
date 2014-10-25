@@ -1,5 +1,9 @@
 package com.freader.bookmodel;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public interface PagedBookListener {
-	public void callback(PagedBook pb);
+	void callback(ArrayList<CharSequence> pages, HashMap<Integer, Integer> hm);
+
 }

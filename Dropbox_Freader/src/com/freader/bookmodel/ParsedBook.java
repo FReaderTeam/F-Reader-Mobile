@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 public class ParsedBook extends Book{
 
-	public static ArrayList<String> paragraphs;
+	private static ArrayList<String> paragraphs;
 	TextView textView;
 	ScreenSlideWaiting activity;
 	
@@ -32,11 +32,11 @@ public class ParsedBook extends Book{
 	
 	public CharSequence getFirstPages(){
 		CharSequence result = " ";
-		Log.w("freader",String.valueOf(paragraphs.size()));
+		Log.w("freader",String.valueOf(getParagraphs().size()));
 		for (int i = 0; i<10; i++){
-			if (i==paragraphs.size())
+			if (i==getParagraphs().size())
 				break;
-			result= result + paragraphs.get(i);
+			result= result + getParagraphs().get(i);
 		}
 		return result;
 	}
@@ -48,5 +48,11 @@ public class ParsedBook extends Book{
 	public void setActivity(ScreenSlideWaiting screenSlideWaiting) {
 		this.activity = screenSlideWaiting;
 	}
+
+	public static ArrayList<String> getParagraphs() {
+		return paragraphs;
+	}
+
+
 
 }
