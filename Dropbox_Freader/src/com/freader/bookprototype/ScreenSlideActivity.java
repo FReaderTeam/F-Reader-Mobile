@@ -83,8 +83,8 @@ public class ScreenSlideActivity extends FragmentActivity {
 			e.printStackTrace();
 		}
         try {
-			firstPage = paragraphsToPages.get(positionDao.getPosition(bookFullPath));
-		} catch (DbxException e) {
+			firstPage = paragraphsToPages.get((int)positionDao.getPosition(bookFullPath));
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -144,11 +144,12 @@ public class ScreenSlideActivity extends FragmentActivity {
         	{
         		if(position == entry.getValue()){
         			try {
-						positionDao.savePosition(bookFullPath, entry.getKey());
+						positionDao.savePosition(bookFullPath, (long)entry.getKey());
 					} catch (DbxException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} // Long - Int??
+        			break;
         		}
         	    System.out.println(entry.getKey() + "/" + entry.getValue());
         	}

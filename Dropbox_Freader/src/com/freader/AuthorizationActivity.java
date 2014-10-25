@@ -48,8 +48,6 @@ public class AuthorizationActivity extends Activity {
 		
 		mDbxAcctMgr = DbxAccountManager.getInstance(getApplicationContext(),
 				appKey, appSecret);
-
-
 		
 		if (!mDbxAcctMgr.hasLinkedAccount())
 			mDbxAcctMgr.startLink((Activity) this, REQUEST_LINK_TO_DBX);
@@ -93,10 +91,6 @@ public class AuthorizationActivity extends Activity {
 			String mFilePath = data.getStringExtra("filePickerPath");
 			Log.e(mFilePath, "was choosen");
 			// TODO call upload async task
-			String [] s = mFilePath.split("/");
-			Log.e(s[s.length-1], "file name");
-			new UploadBookTask(AuthorizationActivity.this, s[s.length-1], mFilePath,
-					mDbxAcctMgr).execute();
 			break;
 		case REQUEST_LINK_TO_DBX:
 			mLoggedIn = true;

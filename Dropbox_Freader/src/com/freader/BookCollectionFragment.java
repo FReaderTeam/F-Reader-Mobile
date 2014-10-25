@@ -50,6 +50,7 @@ public class BookCollectionFragment extends Fragment {
 		this.mAppPath = path;
 		this.a_activity = a_activity;
 	}
+	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
