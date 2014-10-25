@@ -64,7 +64,9 @@ public class ScreenSlideActivity extends FragmentActivity {
         paragraphsToPages = (HashMap<Integer, Integer>) getIntent().getSerializableExtra("pHashMap");
         bookFullPath = getIntent().getStringExtra("path");
         
-        att = (ArrayList<String>) getIntent().getSerializableExtra("book");
+        //att = (ArrayList<String>) getIntent().getSerializableExtra("book");
+        att = PagedBook.pages;
+        
         numberOfPages = getIntent().getIntExtra("pagesNumber", 0);
         numbersOfPageForProgressTextView = numberOfPages - 1;
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());

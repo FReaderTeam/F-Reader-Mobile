@@ -2,6 +2,7 @@ package com.freader.bookprototype;
 
 import java.util.ArrayList;
 
+import com.freader.AuthorizationActivity;
 import com.freader.R;
 import com.freader.bookmodel.PagedBook;
 import com.freader.bookmodel.ParsedBook;
@@ -34,7 +35,10 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
         setContentView(R.layout.waiting_screen_slide);
 		title = getIntent().getStringExtra("title");
         author = getIntent().getStringExtra("name");
-        ArrayList<String> att = (ArrayList<String>) getIntent().getSerializableExtra("book");
+        
+        //ArrayList<String> att = (ArrayList<String>) getIntent().getSerializableExtra("book");
+        ArrayList<String> att = AuthorizationActivity.arr;
+        
         bookFullPath = getIntent().getStringExtra("path");
         this.parsedBook = new ParsedBook(title, author, att);
         text = parsedBook.getFirstPages();
@@ -60,7 +64,7 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
 		Intent intent = new Intent(this, ScreenSlideActivity.class);
 		intent.putExtra("title", pb.getTitle());
 		intent.putExtra("name", pb.getAuthor());
-		intent.putExtra("book", pb.getPages());
+		//intent.putExtra("book", pb.getPages());
 		intent.putExtra("pagesNumber", pb.getPagesNum());
 		intent.putExtra("pHashMap", pb.getHashMap());
 		intent.putExtra("path", bookFullPath);

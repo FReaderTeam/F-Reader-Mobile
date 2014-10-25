@@ -26,6 +26,7 @@ public class AuthorizationActivity extends Activity {
 	final static private String appSecret = "4ubx866o44ayo0s";
 
 	public static DbxDatastoreManager dbxDatastoreManager;
+	public static ArrayList<String> arr;
 	
 	private static final int PICKFILE_RESULT_CODE = 1;
 
@@ -164,7 +165,8 @@ public class AuthorizationActivity extends Activity {
 		Intent intent = new Intent(this, ScreenSlideWaiting.class);
 		intent.putExtra("title", title);
 		intent.putExtra("name", name);
-		intent.putExtra("book", arr);
+		this.arr = arr;
+		//intent.putExtra("book", arr);
 		intent.putExtra("path", path);
 		Log.w("Test", "Before activity call");
 		startActivity(intent);
