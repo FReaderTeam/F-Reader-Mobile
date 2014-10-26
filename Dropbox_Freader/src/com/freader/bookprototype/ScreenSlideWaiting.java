@@ -65,7 +65,7 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
 		Intent intent = new Intent(this, ScreenSlideActivity.class);
 		intent.putExtra("title", title);
 		intent.putExtra("name", author);
-		//intent.putExtra("book", pb.getPages());
+		intent.putExtra("book", pages);
 		intent.putExtra("pagesNumber", pages.size());
 		intent.putExtra("pHashMap", hm);
 		intent.putExtra("path", bookFullPath);

@@ -39,7 +39,7 @@ public class ScreenSlideActivity extends FragmentActivity {
     private int numberOfPages;
     private String author;
     private String title;
-    private ArrayList<String> att;
+    private ArrayList<CharSequence> att;
     private int numbersOfPageForProgressTextView;
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
@@ -64,8 +64,8 @@ public class ScreenSlideActivity extends FragmentActivity {
         paragraphsToPages = (HashMap<Integer, Integer>) getIntent().getSerializableExtra("pHashMap");
         bookFullPath = getIntent().getStringExtra("path");
         
-        //att = (ArrayList<String>) getIntent().getSerializableExtra("book");
-        att = PagedBook.pages;
+        att = (ArrayList<CharSequence>) getIntent().getSerializableExtra("book");
+        //att = PagedBook.pages;
         
         numberOfPages = getIntent().getIntExtra("pagesNumber", 0);
         numbersOfPageForProgressTextView = numberOfPages - 1;
