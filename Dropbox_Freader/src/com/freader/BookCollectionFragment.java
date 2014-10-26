@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -86,6 +88,12 @@ public class BookCollectionFragment extends Fragment {
 	}
 
 	public void setBooks(List<DbxFileInfo> books) {
+		Collections.sort(books, new Comparator<DbxFileInfo>(){
+			@Override
+			public int compare(DbxFileInfo lhs, DbxFileInfo rhs) {
+				return rhs.modifiedTime.compareTo(lhs.modifiedTime);
+			}
+		});
 		this.mBooks = books;
 		String[] fileNames = new String[mBooks.size()];
 		for (int i = 0; i < mBooks.size(); i++) {

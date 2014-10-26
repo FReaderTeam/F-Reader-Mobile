@@ -151,7 +151,7 @@ public class Fb2InstantParser {
 				if (title.find()) {
 					paragraph = SOP.fb2Paragraph.matcher(title.group(0));
 					while (paragraph.find()) {
-						col.add("%title"
+						col.add("%title "
 								+ paragraph.group(0).replaceAll("<.*?>", ""));
 					}
 				}
@@ -171,12 +171,12 @@ public class Fb2InstantParser {
 					StringBuilder s = new StringBuilder();
 					if (title.find()) {
 						if (newSection) {
-							s.append("%new-section");
+							s.append("%new-section ");
 							newSection = false;
 						}
 						paragraph = SOP.fb2Paragraph.matcher(title.group(0));
 						while (paragraph.find()) {
-							s.append("%title");
+							s.append("%title ");
 							s.append(paragraph.group(0).replaceAll("<.*?>", ""));
 							col.add(s.toString());
 							paragraphIndexer++;
