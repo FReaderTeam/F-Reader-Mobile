@@ -22,8 +22,8 @@ import com.freader.bookprototype.ScreenSlideWaiting;
 
 public class AuthorizationActivity extends Activity {
 
-	final static private String appKey = "vahra3f0bhvq3pu";
-	final static private String appSecret = "4ubx866o44ayo0s";
+	final static private String appKey = "5562h0w5xy70afy";
+	final static private String appSecret = "5j4dkuybako34a9";
 
 	public static DbxDatastoreManager dbxDatastoreManager;
 	public static ArrayList<String> arr;
