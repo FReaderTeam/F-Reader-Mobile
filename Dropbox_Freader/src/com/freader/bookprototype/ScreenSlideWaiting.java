@@ -27,6 +27,7 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
     private CharSequence text;
     private int size;
     private String bookFullPath;
+    public String dbPath;
     
     
 	@Override
@@ -41,6 +42,7 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
         ArrayList<String> att = AuthorizationActivity.arr;
         
         bookFullPath = getIntent().getStringExtra("path");
+        dbPath = getIntent().getStringExtra("dbPath");
         this.parsedBook = new ParsedBook(title, author, att);
         text = parsedBook.getFirstPages();
         textViewForGetSize = (TextView)findViewById(R.id.textViewForGetSize);
@@ -63,12 +65,13 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
 	@Override
 	public void callback(ArrayList<CharSequence> pages, HashMap<Integer, Integer> hm) {
 		Intent intent = new Intent(this, ScreenSlideActivity.class);
-		intent.putExtra("title", title);
+		intent.putExtra("title", title); 
 		intent.putExtra("name", author);
 		intent.putExtra("book", pages);
 		intent.putExtra("pagesNumber", pages.size());
 		intent.putExtra("pHashMap", hm);
 		intent.putExtra("path", bookFullPath);
+		intent.putExtra("dbPath", dbPath);
 		Log.w("Test", "Before activity call");
 		startActivity(intent);
 		

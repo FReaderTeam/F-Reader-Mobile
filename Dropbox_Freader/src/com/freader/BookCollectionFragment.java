@@ -46,13 +46,15 @@ public class BookCollectionFragment extends Fragment {
 	private String mAppPath;
 	private AuthorizationActivity a_activity;
 
+	public BookCollectionFragment() {
+	}
+
 	public BookCollectionFragment(DbxAccountManager mDbxAcctMgr, String path,
 			AuthorizationActivity a_activity) {
 		this.mDbxAcctMgr = mDbxAcctMgr;
 		this.mAppPath = path;
 		this.a_activity = a_activity;
 	}
-	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,7 +90,7 @@ public class BookCollectionFragment extends Fragment {
 	}
 
 	public void setBooks(List<DbxFileInfo> books) {
-		Collections.sort(books, new Comparator<DbxFileInfo>(){
+		Collections.sort(books, new Comparator<DbxFileInfo>() {
 			@Override
 			public int compare(DbxFileInfo lhs, DbxFileInfo rhs) {
 				return rhs.modifiedTime.compareTo(lhs.modifiedTime);
@@ -106,8 +108,8 @@ public class BookCollectionFragment extends Fragment {
 		mBookListView.setAdapter(adapter);
 	}
 
-	public void callbackDBTask(String bookPath) {
-		//parse
+	public void callbackDBTask(String bookPath, String dbPath) {
+		// parse
 		AsyncParser ap = new AsyncParser();
 		ap.execute(bookPath);
 		EBook ebook = new EBook();
@@ -121,7 +123,7 @@ public class BookCollectionFragment extends Fragment {
 		String name = ebook.authors.get(0).firstName + " "
 				+ ebook.authors.get(0).middleName + " "
 				+ ebook.authors.get(0).lastName;
-		a_activity.startPageActivity(bookPath, name, ebook.title,
+		a_activity.startPageActivity(bookPath, dbPath, name, ebook.title,
 				ebook.parsedBook);
 	}
 

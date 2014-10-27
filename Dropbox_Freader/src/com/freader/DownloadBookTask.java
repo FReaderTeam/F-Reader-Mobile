@@ -67,28 +67,21 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 					.getLinkedAccount());
 			testFile = sys.open(mBookPath);
 			String contents = testFile.readString();
-			/*byte[] myBytes = null;
-			myBytes = contents.getBytes("UTF-8");
-			// writing to file
-			FileOutputStream fos = new FileOutputStream(file);
-			fos.write(myBytes);
-			fos.close();*/
-			FileWriter writer = new FileWriter(file); writer.write(contents);
-			 writer.close();
+			FileWriter writer = new FileWriter(file);
+			writer.write(contents);
+			writer.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
+			mErrorMsg = "File not found!";
 			return false;
 		} catch (Unauthorized e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			mErrorMsg = "Problem with authorization!";
 			return false;
 		} catch (DbxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			mErrorMsg = "Error!";
 			return false;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			mErrorMsg = "Can't write file to storage!";
 			return false;
 		} finally {
 			testFile.close();
@@ -103,8 +96,8 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 			// Couldn't download it, so show an error
 			showToast(mErrorMsg);
 		} else {
-			showToast("Succesfull!");
-			fragment.callbackDBTask(appFolderPath + "/" + mBookName);
+			showToast("Succesfull! " + mBookPath.toString());
+			fragment.callbackDBTask(appFolderPath + "/" + mBookName, mBookPath.toString());
 		}
 	}
 

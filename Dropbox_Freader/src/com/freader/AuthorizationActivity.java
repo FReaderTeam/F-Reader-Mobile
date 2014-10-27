@@ -27,7 +27,7 @@ public class AuthorizationActivity extends Activity {
 
 	public static DbxDatastoreManager dbxDatastoreManager;
 	public static ArrayList<String> arr;
-	
+
 	private static final int PICKFILE_RESULT_CODE = 1;
 
 	private static final int REQUEST_LINK_TO_DBX = 0;
@@ -45,11 +45,10 @@ public class AuthorizationActivity extends Activity {
 		// Basic Android widgets
 		setClearListView();
 		createFolder();
-		
-		
+
 		mDbxAcctMgr = DbxAccountManager.getInstance(getApplicationContext(),
 				appKey, appSecret);
-		
+
 		if (!mDbxAcctMgr.hasLinkedAccount())
 			mDbxAcctMgr.startLink((Activity) this, REQUEST_LINK_TO_DBX);
 
@@ -133,12 +132,12 @@ public class AuthorizationActivity extends Activity {
 	private void setLoggedIn(boolean loggedIn) {
 		mLoggedIn = loggedIn;
 		if (loggedIn) {
-			
+
 			try {
-				dbxDatastoreManager = DbxDatastoreManager.forAccount(mDbxAcctMgr.getLinkedAccount());
+				dbxDatastoreManager = DbxDatastoreManager
+						.forAccount(mDbxAcctMgr.getLinkedAccount());
 			} catch (Unauthorized e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				showToast("Problem with authorization!");
 			}
 			menu.getItem(0).setTitle("Unlink from Dropbox");
 			listOfBooks.setText("List of books:");
@@ -160,14 +159,15 @@ public class AuthorizationActivity extends Activity {
 		error.show();
 	}
 
-	void startPageActivity(String path, String title, String name,
-			ArrayList<String> arr) {
+	void startPageActivity(String path, String dbPath, String title,
+			String name, ArrayList<String> arr) {
 		Intent intent = new Intent(this, ScreenSlideWaiting.class);
 		intent.putExtra("title", title);
 		intent.putExtra("name", name);
 		this.arr = arr;
-		//intent.putExtra("book", arr);
+		// intent.putExtra("book", arr);
 		intent.putExtra("path", path);
+		intent.putExtra("dbPath",dbPath);
 		Log.w("Test", "Before activity call");
 		startActivity(intent);
 	}

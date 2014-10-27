@@ -51,6 +51,7 @@ public class ScreenSlideActivity extends FragmentActivity {
     // save and load page
     private PositionDao positionDao;
     private String bookFullPath;
+    private String dbPath;
     private int firstPage;
     
     @Override
@@ -64,7 +65,7 @@ public class ScreenSlideActivity extends FragmentActivity {
         author = getIntent().getStringExtra("name");
         paragraphsToPages = (HashMap<Integer, Integer>) getIntent().getSerializableExtra("pHashMap");
         bookFullPath = getIntent().getStringExtra("path");
-        
+        dbPath = getIntent().getStringExtra("dbPath");
         att = (ArrayList<CharSequence>) getIntent().getSerializableExtra("book");
     
         
@@ -86,7 +87,7 @@ public class ScreenSlideActivity extends FragmentActivity {
 			e.printStackTrace();
 		}
         try {
-			firstPage = paragraphsToPages.get((int)positionDao.getPosition(bookFullPath));
+			firstPage = paragraphsToPages.get((int)positionDao.getPosition(dbPath));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -147,7 +148,7 @@ public class ScreenSlideActivity extends FragmentActivity {
         	{
         		if(position == entry.getValue()){
         			try {
-						positionDao.savePosition(bookFullPath, (long)entry.getKey());
+						positionDao.savePosition(dbPath, (long)entry.getKey());
 					} catch (DbxException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
