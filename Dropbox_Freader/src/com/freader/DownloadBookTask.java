@@ -26,13 +26,14 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 
 	private Context mContext;
 	private final ProgressDialog mDialog;
-	// private DropboxAPI<?> mApi;
 	private boolean mCanceled;
 	private String mErrorMsg;
 	private String mBookName;
 	private DbxPath mBookPath;
 	private String appFolderPath;
 	private BookCollectionFragment fragment;
+	private Boolean needToDownload;
+	private File file;
 	DbxAccountManager mDbxAcctMgr;
 
 	public DownloadBookTask(Context context, String bookName, DbxPath bookPath,
@@ -43,33 +44,39 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 		mDbxAcctMgr = f.getAccountManager();
 		appFolderPath = appPath;
 		fragment = f;
+		needToDownload = true;
 		mDialog = new ProgressDialog(context);
-		mDialog.setMessage("Downloading");
-		mDialog.setButton("Cancel", new OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-				mCanceled = true;
-				mErrorMsg = "Canceled";
-				// delete book from storage
-				File file = new File(appFolderPath + "/" + mBookName);
-				file.delete();
-			}
-		});
-		mDialog.show();
+		file = new File(appFolderPath + "/" + mBookName);
+		if (file.exists() && file.length() > 0)
+			needToDownload = false;
+		else {
+			mDialog.setMessage("Downloading");
+			mDialog.setButton("Cancel", new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					mCanceled = true;
+					mErrorMsg = "Canceled";
+					// delete book from storage
+					File file = new File(appFolderPath + "/" + mBookName);
+					file.delete();
+				}
+			});
+			mDialog.show();
+		}
 	}
 
 	@Override
 	protected Boolean doInBackground(Void... params) {
-		File file = new File(appFolderPath + "/" + mBookName);
-
 		DbxFile testFile = null;
 		try {
-			DbxFileSystem sys = DbxFileSystem.forAccount(mDbxAcctMgr
-					.getLinkedAccount());
-			testFile = sys.open(mBookPath);
-			String contents = testFile.readString();
-			FileWriter writer = new FileWriter(file);
-			writer.write(contents);
-			writer.close();
+			if (needToDownload) {
+				DbxFileSystem sys = DbxFileSystem.forAccount(mDbxAcctMgr
+						.getLinkedAccount());
+				testFile = sys.open(mBookPath);
+				String contents = testFile.readString();
+				FileWriter writer = new FileWriter(file);
+				writer.write(contents);
+				writer.close();
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 			mErrorMsg = "File not found!";
@@ -84,7 +91,8 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 			mErrorMsg = "Can't write file to storage!";
 			return false;
 		} finally {
-			testFile.close();
+			if (needToDownload)
+				testFile.close();
 		}
 		return true;
 	}
@@ -96,8 +104,10 @@ public class DownloadBookTask extends AsyncTask<Void, Long, Boolean> {
 			// Couldn't download it, so show an error
 			showToast(mErrorMsg);
 		} else {
-			showToast("Succesfull! " + mBookPath.toString());
-			fragment.callbackDBTask(appFolderPath + "/" + mBookName, mBookPath.toString());
+			if (needToDownload)
+				showToast("Succesfull! " + mBookPath.toString());
+			fragment.callbackDBTask(appFolderPath + "/" + mBookName,
+					mBookPath.toString());
 		}
 	}
 
