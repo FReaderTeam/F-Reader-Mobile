@@ -3,8 +3,6 @@ package com.freader.bookmodel;
 import java.util.HashMap;
 import java.util.ArrayList;
 
-import java.util.HashMap;
-import com.freader.bookprototype.ScreenSlideActivity;
 import com.freader.bookprototype.ScreenSlideWaiting;
 
 import android.text.SpannableString;
@@ -12,14 +10,13 @@ import android.util.Log;
 import android.widget.TextView;
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
-import android.util.Log;
 
-@SuppressLint("UseSparseArrays") public class BookFetchAsync extends AsyncTask<ParsedBook, Void, ArrayList<CharSequence>> {
+@SuppressLint("UseSparseArrays")
+public class BookFetchAsync extends AsyncTask<ParsedBook, Void, ArrayList<CharSequence>> {
 
 	private ScreenSlideWaiting activity;
 	private HashMap<Integer, Integer> hm;
-	
-	
+
 	@Override
 	protected ArrayList<CharSequence> doInBackground(ParsedBook... params) {
 		ArrayList<CharSequence> pages = new ArrayList<CharSequence>();
@@ -30,21 +27,20 @@ import android.util.Log;
 		ArrayList<String> words;
 		int p = 0;
 		hm = new HashMap<Integer, Integer>();
-		for (int k = start_paragraph; k < params[0].getParagraphs().size(); k++) { // Start walking through paragraphs
+		for (int k = start_paragraph; k < params[0].getSize(); k++) { // Start walking through paragraphs
 			hm.put(k, p);
-			words = getWordList(params[0].getParagraphs().get(k)); // Split a paragraph to words
+			words = getWordList(params[0].getParagraph(k)); // Split a paragraph to words
 			for (int i = 0; i < words.size(); i++) {
 				add += " " + words.get(i); // Add a word each time
 				if (isTooLarge(add, params[0].textView)) { // Check if the line is longer than the page width
-					if (lines == params[0].lines_num-1) { // If page is over, create new page
+					if (lines == params[0].lines_num - 1) { // If page is over, create new page
 						page += add;
 						add = words.get(i); // Add one missed word
 						pages.add(page);
 						p++;
 						page = new String();
 						lines = 0;
-					}
-					else{
+					} else {
 						lines++;
 						page += previous;
 						add = "";
@@ -59,19 +55,19 @@ import android.util.Log;
 				lines++;
 				continue;
 			} else { // If there isn't, initialize new page
-				page+=add;
+				page += add;
 				pages.add(page);
 				p++;
 				page = new String();
 				lines = 0;
 			}
-			
+
 		}
-		if (page!=""){
+		if (page != "") {
 			pages.add(page);
 			p++;
 		}
-		Log.w("BookFetch", "Fetched, last page " + pages.get(pages.size()-1));
+		Log.w("BookFetch", "Fetched, last page " + pages.get(pages.size() - 4));
 		activity = params[0].activity;
 
 		return pages;
@@ -83,7 +79,7 @@ import android.util.Log;
 		String word;
 		while (i < line.length()) {
 			word = "";
-			while (line.charAt(i) == ' ' && i < line.length()) {
+			while (i < line.length() && line.charAt(i) == ' ') {
 				i++;
 			}
 

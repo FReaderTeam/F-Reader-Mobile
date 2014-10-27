@@ -2,7 +2,6 @@ package com.freader.bookmodel;
 
 import java.util.ArrayList;
 
-import com.freader.bookprototype.ScreenSlideActivity;
 import com.freader.bookprototype.ScreenSlideWaiting;
 
 import android.util.Log;
@@ -32,11 +31,11 @@ public class ParsedBook extends Book{
 	
 	public CharSequence getFirstPages(){
 		CharSequence result = " ";
-		Log.w("freader",String.valueOf(getParagraphs().size()));
+		Log.w("freader",String.valueOf(getSize()));
 		for (int i = 0; i<10; i++){
-			if (i==getParagraphs().size())
+			if (i==getSize())
 				break;
-			result= result + getParagraphs().get(i);
+			result= result + getParagraph(i);
 		}
 		return result;
 	}
@@ -49,10 +48,13 @@ public class ParsedBook extends Book{
 		this.activity = screenSlideWaiting;
 	}
 
-	public static ArrayList<String> getParagraphs() {
-		return paragraphs;
+	public int getSize(){
+		return paragraphs.size();
 	}
-
+	
+	public String getParagraph(int index){
+		return paragraphs.get(index);
+	}
 
 
 }
