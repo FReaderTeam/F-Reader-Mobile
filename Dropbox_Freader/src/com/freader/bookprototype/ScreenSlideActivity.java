@@ -56,6 +56,7 @@ public class ScreenSlideActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.w("Test", "After activity call");
         setContentView(R.layout.activity_screen_slide);
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setPageTransformer(true, new ZoomOutPageTransformer());
