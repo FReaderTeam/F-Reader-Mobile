@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.freader.bookprototype.ScreenSlideWaiting;
 
 import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.widget.TextView;
 import android.annotation.SuppressLint;
@@ -16,7 +17,8 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Void, ArrayList<CharSe
 
 	private ScreenSlideWaiting activity;
 	private HashMap<Integer, Integer> hm;
-
+	
+	
 	@Override
 	protected ArrayList<CharSequence> doInBackground(ParsedBook... params) {
 		ArrayList<CharSequence> pages = new ArrayList<CharSequence>();
@@ -31,11 +33,23 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Void, ArrayList<CharSe
 			hm.put(k, p);
 			words = getWordList(params[0].getParagraph(k)); // Split a paragraph to words
 			for (int i = 0; i < words.size(); i++) {
-				add += " " + words.get(i); // Add a word each time
+				if (words.get(i).equals("%new-section")){
+					page += add;						
+					pages.add(page);
+					p++;
+					page = new String();
+					lines = 0;
+					continue;
+				}
+				if (words.get(i).equals("%title")){
+					add+="    ";
+				}
+				else
+					add += " " + words.get(i); // Add a word each time
 				if (isTooLarge(add, params[0].textView)) { // Check if the line is longer than the page width
 					if (lines == params[0].lines_num - 1) { // If page is over, create new page
-						page += add;
-						add = words.get(i); // Add one missed word
+						page += add;						
+						add = words.get(i); // Add one word
 						pages.add(page);
 						p++;
 						page = new String();
@@ -53,7 +67,6 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Void, ArrayList<CharSe
 				page += '\n';
 				add = " ";
 				lines++;
-				continue;
 			} else { // If there isn't, initialize new page
 				page += add;
 				pages.add(page);
@@ -67,6 +80,8 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Void, ArrayList<CharSe
 			pages.add(page);
 			p++;
 		}
+		
+		
 		Log.w("BookFetch", "Fetched, last page " + pages.get(pages.size() - 4));
 		activity = params[0].activity;
 
