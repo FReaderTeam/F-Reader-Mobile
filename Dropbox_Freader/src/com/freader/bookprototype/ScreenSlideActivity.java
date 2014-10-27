@@ -47,7 +47,7 @@ public class ScreenSlideActivity extends FragmentActivity {
     private TextView progressTextView;
     private TextView authorAndTitleTextView;
     private HashMap<Integer, Integer> paragraphsToPages;
-    
+    private String dropboxPath;
     // save and load page
     private PositionDao positionDao;
     private String bookFullPath;
@@ -61,6 +61,7 @@ public class ScreenSlideActivity extends FragmentActivity {
         mPager.setPageTransformer(true, new ZoomOutPageTransformer());
         title = getIntent().getStringExtra("title");
         author = getIntent().getStringExtra("name");
+        dropboxPath = getIntent().getStringExtra("dropbox_path");
         paragraphsToPages = (HashMap<Integer, Integer>) getIntent().getSerializableExtra("pHashMap");
         bookFullPath = getIntent().getStringExtra("path");
         
@@ -83,7 +84,7 @@ public class ScreenSlideActivity extends FragmentActivity {
 			e.printStackTrace();
 		}
         try {
-			firstPage = paragraphsToPages.get((int)positionDao.getPosition(bookFullPath));
+			firstPage = paragraphsToPages.get((int)positionDao.getPosition(dropboxPath));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -144,7 +145,7 @@ public class ScreenSlideActivity extends FragmentActivity {
         	{
         		if(position == entry.getValue()){
         			try {
-						positionDao.savePosition(bookFullPath, (long)entry.getKey());
+						positionDao.savePosition(dropboxPath, (long)entry.getKey());
 					} catch (DbxException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

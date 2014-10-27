@@ -19,11 +19,9 @@ import com.dropbox.sync.android.DbxDatastoreManager;
 import com.dropbox.sync.android.DbxException.Unauthorized;
 
 import com.freader.bookprototype.ScreenSlideWaiting;
+import com.freader.dao.DropboxSettings;
 
 public class AuthorizationActivity extends Activity {
-
-	final static private String appKey = "vahra3f0bhvq3pu";
-	final static private String appSecret = "4ubx866o44ayo0s";
 
 	public static DbxDatastoreManager dbxDatastoreManager;
 	
@@ -47,7 +45,7 @@ public class AuthorizationActivity extends Activity {
 		
 		
 		mDbxAcctMgr = DbxAccountManager.getInstance(getApplicationContext(),
-				appKey, appSecret);
+				DropboxSettings.APP_KEY, DropboxSettings.APP_SECRET);
 		
 		if (!mDbxAcctMgr.hasLinkedAccount())
 			mDbxAcctMgr.startLink((Activity) this, REQUEST_LINK_TO_DBX);
@@ -159,13 +157,14 @@ public class AuthorizationActivity extends Activity {
 		error.show();
 	}
 
-	void startPageActivity(String path, String title, String name,
+	void startPageActivity(String dropboxPath, String path, String title, String name,
 			ArrayList<String> arr) {
 		Intent intent = new Intent(this, ScreenSlideWaiting.class);
 		intent.putExtra("title", title);
 		intent.putExtra("name", name);
 		intent.putExtra("book", arr);
 		intent.putExtra("path", path);
+		intent.putExtra("dropbox_path", dropboxPath);
 		Log.w("Test", "Before activity call");
 		startActivity(intent);
 	}

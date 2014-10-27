@@ -25,7 +25,7 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
     private CharSequence text;
     private int size;
     private String bookFullPath;
-    
+    private String dropboxPath;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +34,7 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
         setContentView(R.layout.waiting_screen_slide);
 		title = getIntent().getStringExtra("title");
         author = getIntent().getStringExtra("name");
+        dropboxPath = getIntent().getStringExtra("dropbox_path");
         ArrayList<String> att = (ArrayList<String>) getIntent().getSerializableExtra("book");
         bookFullPath = getIntent().getStringExtra("path");
         this.parsedBook = new ParsedBook(title, author, att);
@@ -64,6 +65,7 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
 		intent.putExtra("pagesNumber", pb.getPagesNum());
 		intent.putExtra("pHashMap", pb.getHashMap());
 		intent.putExtra("path", bookFullPath);
+		intent.putExtra("dropbox_path", dropboxPath);
 		Log.w("Test", "Before activity call");
 		startActivity(intent);
 		

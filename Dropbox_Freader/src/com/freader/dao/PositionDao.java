@@ -21,8 +21,8 @@ public class PositionDao {
         datastore = mDatastoreManager.openDefaultDatastore();
     }
      
-    public synchronized void savePosition(String bookFullPath, long absoluteParagraph) throws DbxException{
-        DbxTable positionTable = datastore.getTable(TABLE_NAME);
+    public synchronized void savePosition(String bookFullPath, long absoluteParagraph) throws DbxException{        
+    	DbxTable positionTable = datastore.getTable(TABLE_NAME);
         DbxFields queryParams = new DbxFields().set(BOOK_PATH_FIELD_NAME, bookFullPath);
         DbxTable.QueryResult results = positionTable.query(queryParams);
         List<DbxRecord> records = results.asList();
@@ -31,7 +31,7 @@ public class PositionDao {
         }
         positionTable.insert()
         .set(BOOK_PATH_FIELD_NAME, bookFullPath)
-        .set(PARAGRAPH_FIELD_NAME, absoluteParagraph);
+        .set(PARAGRAPH_FIELD_NAME, absoluteParagraph - 1);
         datastore.sync();
     }
      
@@ -41,7 +41,7 @@ public class PositionDao {
         DbxTable.QueryResult results = positionTable.query(queryParams);
         try{
         	DbxRecord firstResult = results.iterator().next();
-        	return firstResult.getLong(PARAGRAPH_FIELD_NAME);
+        	return firstResult.getLong(PARAGRAPH_FIELD_NAME) + 1;
         } catch(NoSuchElementException e){
         	return 1;
         }

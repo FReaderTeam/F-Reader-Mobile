@@ -1,18 +1,8 @@
 package com.freader;
 
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
-import android.util.Log;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -26,12 +16,8 @@ import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.dropbox.sync.android.DbxAccountManager;
-import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
-import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
-import com.freader.bookmodel.ParsedBook;
-import com.freader.bookprototype.ScreenSlideActivity;
 import ebook.*;
 import ebook.parser.*;
 
@@ -43,6 +29,7 @@ public class BookCollectionFragment extends Fragment {
 	DbxAccountManager mDbxAcctMgr;
 	private String mAppPath;
 	private AuthorizationActivity a_activity;
+	private DbxPath selectedBookPath;
 
 	public BookCollectionFragment(DbxAccountManager mDbxAcctMgr, String path,
 			AuthorizationActivity a_activity) {
@@ -66,6 +53,7 @@ public class BookCollectionFragment extends Fragment {
 				mBooks.get(position).path.getName();
 				Object obj = mBookListView.getItemAtPosition(position);
 				String obj_itemDetails = (String) obj;
+				selectedBookPath = mBooks.get(position).path;
 				new DownloadBookTask(getActivity(), mBooks.get(position).path
 						.getName(), mBooks.get(position).path, mAppPath,
 						BookCollectionFragment.this).execute();
@@ -113,7 +101,7 @@ public class BookCollectionFragment extends Fragment {
 		String name = ebook.authors.get(0).firstName + " "
 				+ ebook.authors.get(0).middleName + " "
 				+ ebook.authors.get(0).lastName;
-		a_activity.startPageActivity(bookPath, name, ebook.title,
+		a_activity.startPageActivity(selectedBookPath.toString(), bookPath, name, ebook.title,
 				ebook.parsedBook);
 	}
 
