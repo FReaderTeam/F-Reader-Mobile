@@ -83,7 +83,7 @@ public class AuthorizationActivity extends Activity {
 			// TODO call upload async task
 			String [] s = mFilePath.split("/");
 			new UploadBookTask(AuthorizationActivity.this, s[s.length-1], mFilePath,
-					mDbxAcctMgr).execute();
+					mDbxAccountManager).execute();
 			break;
 		case REQUEST_LINK_TO_DBX:
 			mLoggedIn = true;
