@@ -64,10 +64,8 @@ public class BookPickerActivity extends Activity {
 					if (sel.isDirectory())
 						return true;
 					else
-						return (sel.isFile())
-								&& !sel.isHidden()
-								&& (filename.contains(".fb2") || filename
-										.contains(".fb2.zip"));
+						return (sel.isFile()) && !sel.isHidden()
+								&& (filename.contains(".fb2"));
 
 				}
 			};
