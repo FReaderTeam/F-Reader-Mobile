@@ -1,22 +1,37 @@
 package com.freader.bookprototype;
 
+import java.util.Arrays;
+import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.ScaleGestureDetector;
 import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener;
 import android.view.View;
 import android.view.View.MeasureSpec;
+import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.freader.*;
 import com.freader.bookmodel.ParsedBook;
 
@@ -32,6 +47,10 @@ public class ScreenSlidePageFragment extends Fragment implements
 	private TextView mainTextTextView;
 	private View view;
 	private static float mScaleFactor = 25.0f;
+	
+	private int selectedFontIndex;
+	private static final String FRAGMENT_FONT_SIZE = "fragmentFontSize";
+	private SharedPreferences sp;
 
 	public ScreenSlidePageFragment(CharSequence text) {
 		super();
@@ -47,10 +66,60 @@ public class ScreenSlidePageFragment extends Fragment implements
 		view = inflater.inflate(R.layout.fragment_screen_slide_page, null);
 		mainTextTextView = (TextView) view.findViewById(R.id.textViewMainText);
 		mainTextTextView.setText(text);
+		sp = getActivity().getSharedPreferences(FRAGMENT_FONT_SIZE, 
+                Context.MODE_PRIVATE);
+		//mainTextTextView.setOnTouchListener(this);
+		mainTextTextView.setOnLongClickListener(new OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				Builder adb = new AlertDialog.Builder(getActivity());
+				adb.setTitle("Select font size");
+				final List<String> data = Arrays.asList("8", "9", "10", 
+						"11", "12", "13", "14", "15", "16", "17", "18", "19", "20", 
+						"21", "22", "23", "24", "25", "26", "27", "28", "29", "30", 
+						"31", "32", "33", "34", "35", "36", "37", "38", "39", "40");
+				ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+						getActivity(),
+						android.R.layout.select_dialog_singlechoice, data);
+				
+				if(sp.contains(FRAGMENT_FONT_SIZE)) {
+					selectedFontIndex = Integer.parseInt(sp.getString(FRAGMENT_FONT_SIZE, String.valueOf((int)mainTextTextView.getTextSize())));
+				}
+				Log.w("WWWWWWWWWW", selectedFontIndex + "");
+				
+				adb.setSingleChoiceItems(adapter, selectedFontIndex-8, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						
+						selectedFontIndex = Integer.parseInt(data.get(which));
+						
+						Editor editor = sp.edit();
+						editor.putString(FRAGMENT_FONT_SIZE, String.valueOf(data.get(which)));
+						editor.apply();
+						mainTextTextView.setTextSize(Integer.parseInt(sp.getString(FRAGMENT_FONT_SIZE, "")));
+						Log.w("MMMMMMMMMMMMMMMMm", sp.getString(FRAGMENT_FONT_SIZE, ""));
+						
+						Toast.makeText(getActivity(), data.get(which), Toast.LENGTH_LONG).show();
+					}
+				});
+				adb.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						
+						//TODO
+						
+						Toast.makeText(getActivity(), "TEXT SIZE CHANGING", Toast.LENGTH_LONG).show();
+					}
+				});
+				adb.create().show();
+				return false;
+			}
+		});
 
-		mainTextTextView.setOnTouchListener(this);
-
-textSize = mainTextTextView.getTextSize();
+		textSize = mainTextTextView.getTextSize();
 
 		return view;
 	}
@@ -75,7 +144,11 @@ textSize = mainTextTextView.getTextSize();
 		float deltaX, deltaY;
 		switch (actionMask) {
 		case MotionEvent.ACTION_DOWN:
+			
 			pinch = false;
+			
+			
+			
 			break;// первое касание
 		case MotionEvent.ACTION_POINTER_DOWN: // последующие касания
 			pinch = true;
@@ -122,4 +195,17 @@ textSize = mainTextTextView.getTextSize();
 		float valueWide = (float) (WIDE / curScale / (dMetrics.scaledDensity));
 		return valueWide;
 	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		return super.onContextItemSelected(item);
+	}
+	
 }
