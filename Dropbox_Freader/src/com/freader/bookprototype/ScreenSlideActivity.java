@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -165,5 +166,10 @@ public class ScreenSlideActivity extends FragmentActivity {
             return numberOfPages;
         }
     }
-    
+   
+    @Override
+    public void onBackPressed() {
+    	Intent intent = new Intent(this, AuthorizationActivity.class);
+        startActivity(intent);
+    }
 }

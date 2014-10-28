@@ -5,5 +5,4 @@ import java.util.HashMap;
 
 public interface PagedBookListener {
 	void callback(ArrayList<CharSequence> pages, HashMap<Integer, Integer> hm);
-
 }
