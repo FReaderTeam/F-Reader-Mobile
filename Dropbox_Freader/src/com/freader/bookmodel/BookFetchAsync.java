@@ -16,88 +16,70 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Integer, PagedBook> {
 
 	private ScreenSlideWaiting activity;
 
-	
-	
 	@Override
 	protected PagedBook doInBackground(ParsedBook... params) {
 		ArrayList<String> pages = new ArrayList<String>();
-		int start_paragraph = 0;
-		String page = new String();
-		String add = " ", previous = add;
+		int startParagraph = 0;
+		StringBuilder page = new StringBuilder(), add = new StringBuilder(" "), previous = add;
 		int lines = 0;
-		ArrayList<String> words;
-		int p = 0;
-		HashMap<Integer, Integer> hm = new HashMap<Integer, Integer>();
-		for (int k = start_paragraph; k < params[0].paragraphs.size(); k++) { // Start walking through paragraphs
-			hm.put(k, p);
-			words = getWordList(params[0].paragraphs.get(k)); // Split a paragraph to words
-			for (int i = 0; i < words.size(); i++) {
-				add += " " + words.get(i); // Add a word each time
-				
-				if (isTooLarge(add, params[0].textView)) { // Check if the line is longer than the page width
-					if (lines == params[0].lines_num-1) { // If page is over, create new page
-						page += add;
-						add = words.get(i); // Add one missed word
-						pages.add(page);
-						p++;
-						page = new String();
+		String[] words;
+		int pageNumber = 0;
+		HashMap<Integer, Integer> paragraphsToPage = new HashMap<Integer, Integer>();
+		// Start walking through paragraphs
+		for (int par = startParagraph; par < params[0].paragraphs.size(); par++) {
+			paragraphsToPage.put(par, pageNumber);
+			// Split a paragraph to words
+			words = params[0].paragraphs.get(par).split(" ");
+			for (String word : words) {
+				// Add a word each time
+				add.append(" ").append(word);
+				// Check if the line is longer than the page width
+				if (isTooLarge(add, params[0].textView)) {
+					// If page is over, create new page
+					if (lines == params[0].lines_num - 1) {
+						page.append(add);
+						add.setLength(0);
+						add.append(word); // Add one missed word
+						pages.add(page.toString());
+						pageNumber++;
+						page.setLength(0);
 						lines = 0;
-					}
-					else{
+					} else {
 						lines++;
-						page += previous;
-						add = "";
+						page.append(previous);
+						add.setLength(0);
 					}
 				}
 				previous = add;
 			}
-			if (lines < params[0].lines_num - 1) { // If there's enough space on page for another paragraph, go on.
-				page += add;
-				page += '\n';
-				add = " ";
+			// If there's enough space on page for another paragraph, go on.
+			if (lines < params[0].lines_num - 1) {
+				page.append(add).append('\n');
+				add.append(" ");
 				lines++;
 				continue;
-			} else { // If there isn't, initialize new page
-				page+=add;
-				pages.add(page);
-				p++;
-				page = new String();
+				// If there isn't, initialize new page
+			} else {
+				page.append(add);
+				pages.add(page.toString());
+				pageNumber++;
+				page.setLength(0);
 				lines = 0;
 			}
-			
+
 		}
-		if (page!=""){
-			pages.add(page);
-			p++;
+		if (page.length() != 0) {
+			pages.add(page.toString());
+			pageNumber++;
 		}
-		Log.w("BookFetch", "Fetched, last page " + pages.get(pages.size()-1));
+		Log.w("BookFetch", "Fetched, last page " + pages.get(pages.size() - 1));
 		activity = params[0].activity;
-
-		return new PagedBook(params[0].getAuthor(), params[0].getTitle(), pages, hm);
+		return new PagedBook(params[0].getAuthor(), params[0].getTitle(),
+				pages, paragraphsToPage);
 	}
 
-	private ArrayList<String> getWordList(String line) {
-		ArrayList<String> result = new ArrayList<String>();
-		int i = 0;
-		String word;
-		while (i < line.length()) {
-			word = "";
-			while (line.charAt(i) == ' ' && i < line.length()) {
-				i++;
-			}
-
-			if (i == line.length())
-				break;
-
-			while (i < line.length() && line.charAt(i) != ' ')
-				word += line.charAt(i++);
-			result.add(word);
-		}
-		return result;
-	}
-
-	private boolean isTooLarge(String newText, TextView textView) {
-		float textWidth = textView.getPaint().measureText(newText);
+	private boolean isTooLarge(StringBuilder newText, TextView textView) {
+		float textWidth = textView.getPaint().measureText(newText.toString());
 
 		if (textWidth >= textView.getMeasuredWidth()) {
 			return true;
@@ -105,9 +87,9 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Integer, PagedBook> {
 		return false;
 	}
 
-	protected void onPostExecute(PagedBook pb) {
+	protected void onPostExecute(PagedBook pagedBook) {
 		Log.w("com.freader", "Book fetched");
-		activity.callback(pb);
+		activity.callback(pagedBook);
 	}
 
 }

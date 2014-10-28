@@ -35,9 +35,9 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
 		title = getIntent().getStringExtra("title");
         author = getIntent().getStringExtra("name");
         dropboxPath = getIntent().getStringExtra("dropbox_path");
-        ArrayList<String> att = (ArrayList<String>) getIntent().getSerializableExtra("book");
+        ArrayList<String> paragraphs = PagesHolder.getInstance().getData();
         bookFullPath = getIntent().getStringExtra("path");
-        this.parsedBook = new ParsedBook(title, author, att);
+        this.parsedBook = new ParsedBook(title, author, paragraphs);
         text = parsedBook.getFirstPages();
         textViewForGetSize = (TextView)findViewById(R.id.textViewForGetSize);
         textViewForGetSize.setText(text);
@@ -61,12 +61,12 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
 		Intent intent = new Intent(this, ScreenSlideActivity.class);
 		intent.putExtra("title", pb.getTitle());
 		intent.putExtra("name", pb.getAuthor());
-		intent.putExtra("book", pb.getPages());
+		PagesHolder.getInstance().setData(pb.getPages());
 		intent.putExtra("pagesNumber", pb.getPagesNum());
 		intent.putExtra("pHashMap", pb.getHashMap());
 		intent.putExtra("path", bookFullPath);
 		intent.putExtra("dropbox_path", dropboxPath);
-		Log.w("Test", "Before activity call");
+		Log.w("Test", "Before activity call COCO");
 		startActivity(intent);
 		
 	}
