@@ -81,6 +81,9 @@ public class AuthorizationActivity extends Activity {
 			String mFilePath = data.getStringExtra("filePickerPath");
 			Log.e(mFilePath, "was choosen");
 			// TODO call upload async task
+			String [] s = mFilePath.split("/");
+			new UploadBookTask(AuthorizationActivity.this, s[s.length-1], mFilePath,
+					mDbxAcctMgr).execute();
 			break;
 		case REQUEST_LINK_TO_DBX:
 			mLoggedIn = true;
@@ -92,14 +95,12 @@ public class AuthorizationActivity extends Activity {
 		// Create folder Books in main app folder Freader to store books
 		File folder = new File(Environment.getExternalStorageDirectory()
 				+ "/FReader");
-		boolean success = true;
 		if (!folder.exists())
-			success = folder.mkdir();
+			folder.mkdir();
 		folder = new File(Environment.getExternalStorageDirectory()
 				+ "/FReader/Books");
-		success = true;
 		if (!folder.exists())
-			success = folder.mkdir();
+			folder.mkdir();
 	}
 
 	private void logOut() {
