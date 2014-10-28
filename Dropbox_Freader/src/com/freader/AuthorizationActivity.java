@@ -19,11 +19,9 @@ import com.dropbox.sync.android.DbxDatastoreManager;
 import com.dropbox.sync.android.DbxException.Unauthorized;
 
 import com.freader.bookprototype.ScreenSlideWaiting;
+import com.freader.dao.DropboxSettings;
 
 public class AuthorizationActivity extends Activity {
-
-	final static private String appKey = "5562h0w5xy70afy";
-	final static private String appSecret = "5j4dkuybako34a9";
 
 	public static DbxDatastoreManager dbxDatastoreManager;
 	public static ArrayList<String> arr;
@@ -47,7 +45,7 @@ public class AuthorizationActivity extends Activity {
 		createFolder();
 
 		mDbxAcctMgr = DbxAccountManager.getInstance(getApplicationContext(),
-				appKey, appSecret);
+				DropboxSettings.APP_KEY, DropboxSettings.APP_SECRET);
 
 		if (!mDbxAcctMgr.hasLinkedAccount())
 			mDbxAcctMgr.startLink((Activity) this, REQUEST_LINK_TO_DBX);
