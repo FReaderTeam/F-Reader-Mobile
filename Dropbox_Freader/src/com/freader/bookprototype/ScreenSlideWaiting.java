@@ -37,13 +37,12 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
         setContentView(R.layout.waiting_screen_slide);
 		title = getIntent().getStringExtra("title");
         author = getIntent().getStringExtra("name");
-        
-        //ArrayList<String> att = (ArrayList<String>) getIntent().getSerializableExtra("book");
-        ArrayList<String> att = AuthorizationActivity.arr;
+       
+        ArrayList<String> paragraphs = PagesHolder.getInstance().getParagraphs();
         
         bookFullPath = getIntent().getStringExtra("path");
         dbPath = getIntent().getStringExtra("dbPath");
-        this.parsedBook = new ParsedBook(title, author, att);
+        this.parsedBook = new ParsedBook(title, author, paragraphs);
         text = parsedBook.getFirstPages();
         textViewForGetSize = (TextView)findViewById(R.id.textViewForGetSize);
         textViewForGetSize.setText(text);
@@ -67,7 +66,7 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
 		Intent intent = new Intent(this, ScreenSlideActivity.class);
 		intent.putExtra("title", title); 
 		intent.putExtra("name", author);
-		intent.putExtra("book", pages);
+		PagesHolder.getInstance().setPages(pages);
 		intent.putExtra("pagesNumber", pages.size());
 		intent.putExtra("pHashMap", hm);
 		intent.putExtra("path", bookFullPath);

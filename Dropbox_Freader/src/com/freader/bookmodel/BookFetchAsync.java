@@ -5,8 +5,6 @@ import java.util.ArrayList;
 
 import com.freader.bookprototype.ScreenSlideWaiting;
 
-import android.text.SpannableString;
-import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.widget.TextView;
 import android.annotation.SuppressLint;

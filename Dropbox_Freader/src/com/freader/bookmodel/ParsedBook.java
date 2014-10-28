@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 public class ParsedBook extends Book{
 
-	private static ArrayList<String> paragraphs;
+	ArrayList<String> paragraphs;
 	TextView textView;
 	ScreenSlideWaiting activity;
 	

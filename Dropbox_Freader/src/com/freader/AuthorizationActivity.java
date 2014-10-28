@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.dropbox.sync.android.DbxAccountManager;
 import com.dropbox.sync.android.DbxDatastoreManager;
 import com.dropbox.sync.android.DbxException.Unauthorized;
+import com.freader.bookmodel.PagesHolder;
 import com.freader.bookprototype.ScreenSlideWaiting;
 import static com.freader.dao.DropboxSettings.*;
 
@@ -143,15 +144,15 @@ public class AuthorizationActivity extends Activity {
 	}
 
 	void startPageActivity(String path, String dbPath, String title,
-			String name, ArrayList<String> arr) {
+			String name, ArrayList<String> paragraphs) {
 		Intent intent = new Intent(this, ScreenSlideWaiting.class);
 		intent.putExtra("title", title);
 		intent.putExtra("name", name);
-		this.arr = arr;
-		// intent.putExtra("book", arr);
+		PagesHolder.getInstance().setParagraphs(paragraphs);
 		intent.putExtra("path", path);
 		intent.putExtra("dbPath",dbPath);
 		Log.w("Test", "Before activity call");
 		startActivity(intent);
+		
 	}
 }

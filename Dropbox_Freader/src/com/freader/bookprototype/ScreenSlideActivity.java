@@ -29,6 +29,7 @@ import com.dropbox.sync.android.DbxException;
 import com.freader.*;
 import com.freader.bookmodel.PagedBook;
 import com.freader.bookmodel.PagedBookListener;
+import com.freader.bookmodel.PagesHolder;
 import com.freader.bookmodel.ParsedBook;
 import com.freader.dao.PositionDao;
 
@@ -39,7 +40,7 @@ public class ScreenSlideActivity extends FragmentActivity {
     private int numberOfPages;
     private String author;
     private String title;
-    private ArrayList<CharSequence> att;
+    private ArrayList<CharSequence> pages;
     private int numbersOfPageForProgressTextView;
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
@@ -66,9 +67,7 @@ public class ScreenSlideActivity extends FragmentActivity {
         paragraphsToPages = (HashMap<Integer, Integer>) getIntent().getSerializableExtra("pHashMap");
         bookFullPath = getIntent().getStringExtra("path");
         dbPath = getIntent().getStringExtra("dbPath");
-        att = (ArrayList<CharSequence>) getIntent().getSerializableExtra("book");
-    
-        
+        pages = PagesHolder.getInstance().getPages();
         numberOfPages = getIntent().getIntExtra("pagesNumber", 0);
         numbersOfPageForProgressTextView = numberOfPages - 1;
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
@@ -158,7 +157,7 @@ public class ScreenSlideActivity extends FragmentActivity {
         	    System.out.println(entry.getKey() + "/" + entry.getValue());
         	}
         	
-        	return new ScreenSlidePageFragment(att.get(position));
+        	return new ScreenSlidePageFragment(pages.get(position));
         }
 
         @Override
