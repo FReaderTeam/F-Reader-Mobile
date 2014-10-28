@@ -38,25 +38,24 @@ import java.util.HashMap;
 
 public class ScreenSlideActivity extends FragmentActivity {
 
-    private int numberOfPages;
-    private String author;
-    private String title;
-    private ArrayList<CharSequence> pages;
-    private int numbersOfPageForProgressTextView;
-    private ViewPager mPager;
-    private PagerAdapter mPagerAdapter;
-    private SeekBar seekBar;
-    private TextView progressTextView;
-    private TextView authorAndTitleTextView;
-    private HashMap<Integer, Integer> paragraphsToPages;
-    
-    // save and load page
-    private PositionDao positionDao;
-    private String bookFullPath;
-    private String dbPath;
-    private int firstPage;
-    
-    @Override
+	private int numberOfPages;
+	private String author;
+	private String title;
+	private ArrayList<CharSequence> pages;
+	private int numbersOfPageForProgressTextView;
+	private ViewPager mPager;
+	private PagerAdapter mPagerAdapter;
+	private SeekBar seekBar;
+	private TextView progressTextView;
+	private TextView authorAndTitleTextView;
+	private HashMap<Integer, Integer> paragraphsToPages;
+
+	// save and load page
+	private PositionDao positionDao;
+	private String dbPath;
+	private int firstPage;
+
+	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.w("Test", "After activity call");
@@ -66,7 +65,7 @@ public class ScreenSlideActivity extends FragmentActivity {
         title = getIntent().getStringExtra("title");
         author = getIntent().getStringExtra("name");
         paragraphsToPages = (HashMap<Integer, Integer>) getIntent().getSerializableExtra("pHashMap");
-        bookFullPath = getIntent().getStringExtra("path");
+        getIntent().getStringExtra("path");
         dbPath = getIntent().getStringExtra("dbPath");
         pages = PagesHolder.getInstance().getPages();
         numberOfPages = getIntent().getIntExtra("pagesNumber", 0);
@@ -77,17 +76,11 @@ public class ScreenSlideActivity extends FragmentActivity {
         progressTextView = (TextView)findViewById(R.id.textViewProgress);
         authorAndTitleTextView = (TextView)findViewById(R.id.textViewAuthorAndTitle);
         authorAndTitleTextView.setText(author + " " + title);
-        
+   
         // save and load page
-        
         try {
-			positionDao = new PositionDao(AuthorizationActivity.dbxDatastoreManager);
-		} catch (DbxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        try {
-			firstPage = paragraphsToPages.get((int)positionDao.getPosition(dbPath));
+        	int paragraphNumber = (int)PositionDao.getPosition(AuthorizationActivity.datastore,dbPath);
+			firstPage = paragraphsToPages.get(paragraphNumber);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -137,39 +130,39 @@ public class ScreenSlideActivity extends FragmentActivity {
         progressTextView.setText(firstPage + "/" + numbersOfPageForProgressTextView);
     }
 
-    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-        public ScreenSlidePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
+	private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+		public ScreenSlidePagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
 
-        @Override
-        public Fragment getItem(int position) {
-        	for (Map.Entry<Integer, Integer> entry : paragraphsToPages.entrySet())
-        	{
-        		if(position == entry.getValue()){
-        			try {
-						positionDao.savePosition(dbPath, (long)entry.getKey());
+		@Override
+		public Fragment getItem(int position) {
+			for (Map.Entry<Integer, Integer> entry : paragraphsToPages
+					.entrySet()) {
+				if (position == entry.getValue()) {
+					try {
+						PositionDao.savePosition(AuthorizationActivity.datastore, dbPath, (long) entry.getKey());
 					} catch (DbxException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} // Long - Int??
-        			break;
-        		}
-        	    System.out.println(entry.getKey() + "/" + entry.getValue());
-        	}
-        	
-        	return new ScreenSlidePageFragment(pages.get(position));
-        }
+					break;
+				}
+				System.out.println(entry.getKey() + "/" + entry.getValue());
+			}
 
-        @Override
-        public int getCount() {
-            return numberOfPages;
-        }
-    }
-   
-    @Override
-    public void onBackPressed() {
-    	Intent intent = new Intent(this, AuthorizationActivity.class);
-        startActivity(intent);
-    }
+			return new ScreenSlidePageFragment(pages.get(position));
+		}
+
+		@Override
+		public int getCount() {
+			return numberOfPages;
+		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		Intent intent = new Intent(this, AuthorizationActivity.class);
+		startActivity(intent);
+	}
 }

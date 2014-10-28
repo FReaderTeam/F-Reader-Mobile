@@ -13,7 +13,9 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.dropbox.sync.android.DbxAccountManager;
+import com.dropbox.sync.android.DbxDatastore;
 import com.dropbox.sync.android.DbxDatastoreManager;
+import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxException.Unauthorized;
 import com.freader.bookmodel.PagesHolder;
 import com.freader.bookprototype.ScreenSlideWaiting;
@@ -27,6 +29,7 @@ public class AuthorizationActivity extends Activity {
 	
 	// Model
 	public static ArrayList<String> arr;
+	public static DbxDatastore datastore;
 	private boolean mLoggedIn;
 
 	// Android widgets
@@ -121,8 +124,11 @@ public class AuthorizationActivity extends Activity {
 			try {
 				dbxDatastoreManager = DbxDatastoreManager
 						.forAccount(mDbxAccountManager.getLinkedAccount());
+				datastore = dbxDatastoreManager.openDefaultDatastore();
 			} catch (Unauthorized e) {
 				showToast("Problem with authorization!");
+			} catch (DbxException e) {
+				showToast("Problem with opening datastore!");
 			}
 			menu.getItem(0).setTitle("Unlink from Dropbox");
 			listOfBooks.setText("List of books:");
