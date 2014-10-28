@@ -2,7 +2,6 @@ package com.freader;
 
 import java.io.File;
 import java.util.ArrayList;
-
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -13,24 +12,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.dropbox.sync.android.DbxAccountManager;
 import com.dropbox.sync.android.DbxDatastoreManager;
 import com.dropbox.sync.android.DbxException.Unauthorized;
-
 import com.freader.bookprototype.ScreenSlideWaiting;
-import com.freader.dao.DropboxSettings;
+import static com.freader.dao.DropboxSettings.*;
 
 public class AuthorizationActivity extends Activity {
 
+	//Dropbox
 	public static DbxDatastoreManager dbxDatastoreManager;
+	private DbxAccountManager mDbxAccountManager;
+	
+	// Model
 	public static ArrayList<String> arr;
-
-	private static final int PICKFILE_RESULT_CODE = 1;
-
-	private static final int REQUEST_LINK_TO_DBX = 0;
-	private DbxAccountManager mDbxAcctMgr;
-
 	private boolean mLoggedIn;
 
 	// Android widgets
@@ -43,13 +38,10 @@ public class AuthorizationActivity extends Activity {
 		// Basic Android widgets
 		setClearListView();
 		createFolder();
-
-		mDbxAcctMgr = DbxAccountManager.getInstance(getApplicationContext(),
-				DropboxSettings.APP_KEY, DropboxSettings.APP_SECRET);
-
-		if (!mDbxAcctMgr.hasLinkedAccount())
-			mDbxAcctMgr.startLink((Activity) this, REQUEST_LINK_TO_DBX);
-
+		mDbxAccountManager = DbxAccountManager.getInstance(getApplicationContext(),
+				APP_KEY, APP_SECRET);
+		if (!mDbxAccountManager.hasLinkedAccount())
+			mDbxAccountManager.startLink((Activity) this, REQUEST_LINK_TO_DBX);
 	}
 
 	@Override
@@ -57,7 +49,7 @@ public class AuthorizationActivity extends Activity {
 		super.onCreateOptionsMenu(menu);
 		this.menu = menu;
 		getMenuInflater().inflate(R.menu.main, menu);
-		setLoggedIn(mDbxAcctMgr.hasLinkedAccount());
+		setLoggedIn(mDbxAccountManager.hasLinkedAccount());
 		return true;
 	}
 
@@ -69,7 +61,7 @@ public class AuthorizationActivity extends Activity {
 				logOut();
 			} else {
 				// Start the remote authentication
-				mDbxAcctMgr.startLink((Activity) this, REQUEST_LINK_TO_DBX);
+				mDbxAccountManager.startLink((Activity) this, REQUEST_LINK_TO_DBX);
 			}
 			return true;
 		case R.id.mUpload:
@@ -110,14 +102,8 @@ public class AuthorizationActivity extends Activity {
 			success = folder.mkdir();
 	}
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-
-	}
-
 	private void logOut() {
-		mDbxAcctMgr.unlink();
+		mDbxAccountManager.unlink();
 		setLoggedIn(false);
 		setClearListView();
 	}
@@ -130,10 +116,9 @@ public class AuthorizationActivity extends Activity {
 	private void setLoggedIn(boolean loggedIn) {
 		mLoggedIn = loggedIn;
 		if (loggedIn) {
-
 			try {
 				dbxDatastoreManager = DbxDatastoreManager
-						.forAccount(mDbxAcctMgr.getLinkedAccount());
+						.forAccount(mDbxAccountManager.getLinkedAccount());
 			} catch (Unauthorized e) {
 				showToast("Problem with authorization!");
 			}
@@ -142,10 +127,9 @@ public class AuthorizationActivity extends Activity {
 			FragmentTransaction transaction = getFragmentManager()
 					.beginTransaction();
 			transaction.add(R.id.books_fragment, new BookCollectionFragment(
-					mDbxAcctMgr, Environment.getExternalStorageDirectory()
+					mDbxAccountManager, Environment.getExternalStorageDirectory()
 							+ "/FReader/Books", this));
 			transaction.commit();
-
 		} else {
 			menu.getItem(0).setTitle("Link from Dropbox");
 			listOfBooks.setText(" ");

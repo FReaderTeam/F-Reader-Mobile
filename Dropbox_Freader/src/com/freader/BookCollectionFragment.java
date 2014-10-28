@@ -1,20 +1,9 @@
 package com.freader;
 
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
-import android.util.Log;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -26,23 +15,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
-
 import com.dropbox.sync.android.DbxAccountManager;
-import com.dropbox.sync.android.DbxFile;
 import com.dropbox.sync.android.DbxFileInfo;
-import com.dropbox.sync.android.DbxFileSystem;
-import com.dropbox.sync.android.DbxPath;
-import com.freader.bookmodel.ParsedBook;
-import com.freader.bookprototype.ScreenSlideActivity;
 import ebook.*;
 import ebook.parser.*;
 
 public class BookCollectionFragment extends Fragment {
 
+	// Dropbox
+	DbxAccountManager mDbxAcctMgr;
+	
+	// Model
 	private ListView mBookListView;
 	private List<DbxFileInfo> mBooks;
-
-	DbxAccountManager mDbxAcctMgr;
 	private String mAppPath;
 	private AuthorizationActivity a_activity;
 

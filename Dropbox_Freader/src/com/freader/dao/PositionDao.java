@@ -31,7 +31,7 @@ public class PositionDao {
         }
         positionTable.insert()
         .set(BOOK_PATH_FIELD_NAME, bookFullPath)
-        .set(PARAGRAPH_FIELD_NAME, absoluteParagraph);
+        .set(PARAGRAPH_FIELD_NAME, absoluteParagraph-4);
         datastore.sync();
     }
      
@@ -41,7 +41,7 @@ public class PositionDao {
         DbxTable.QueryResult results = positionTable.query(queryParams);
         try{
         	DbxRecord firstResult = results.iterator().next();
-        	return firstResult.getLong(PARAGRAPH_FIELD_NAME);
+        	return firstResult.getLong(PARAGRAPH_FIELD_NAME) + 4;
         } catch(NoSuchElementException e){
         	return 1;
         }
