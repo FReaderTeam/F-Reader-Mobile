@@ -24,7 +24,7 @@ public class BookCollectionFragment extends Fragment {
 
 	// Dropbox
 	DbxAccountManager mDbxAcctMgr;
-	
+
 	// Model
 	private ListView mBookListView;
 	private List<DbxFileInfo> mBooks;
@@ -105,9 +105,15 @@ public class BookCollectionFragment extends Fragment {
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
-		String name = ebook.authors.get(0).firstName + " "
-				+ ebook.authors.get(0).middleName + " "
-				+ ebook.authors.get(0).lastName;
+		String name;
+		if (ebook.authors.get(0).middleName == null)
+			name = ebook.authors.get(0).firstName + " "
+					+ ebook.authors.get(0).lastName;
+		else
+			name = ebook.authors.get(0).firstName + " "
+					+ ebook.authors.get(0).middleName + " "
+					+ ebook.authors.get(0).lastName;
+		//name.replaceAll("null", "");
 		a_activity.startPageActivity(bookPath, dbPath, name, ebook.title,
 				ebook.parsedBook);
 	}
