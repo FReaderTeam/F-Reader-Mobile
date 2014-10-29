@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -42,7 +43,10 @@ public class ScreenSlideActivity extends FragmentActivity {
 	private TextView authorAndTitleTextView;
 	private HashMap<Integer, Integer> paragraphsToPages;
 	private String dbPath;
+	private String path;
 	private int firstPage;
+	
+	private ScreenSlideActivity screenSlideActivity;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +57,7 @@ public class ScreenSlideActivity extends FragmentActivity {
         title = getIntent().getStringExtra(TITLE);
         author = getIntent().getStringExtra(NAME);
         paragraphsToPages = (HashMap<Integer, Integer>) getIntent().getSerializableExtra(P_HASH_MAP);
-        getIntent().getStringExtra(PATH);
+        path = getIntent().getStringExtra(PATH);
         dbPath = getIntent().getStringExtra(DB_PATH);
         pages = PagesHolder.getInstance().getPages();
         numberOfPages = getIntent().getIntExtra(PAGES_NUMBER, 0);
@@ -109,7 +113,11 @@ public class ScreenSlideActivity extends FragmentActivity {
         	}
         });
         progressTextView.setText(firstPage + "/" + numbersOfPageForProgressTextView);
-    }
+        screenSlideActivity = this;
+        
+        String rrr = screenSlideActivity.getScreenSlideAuthor();
+        Log.w("FAFAFAFAFAF", rrr);
+	}
 
 	private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
 		public ScreenSlidePagerAdapter(FragmentManager fm) {
@@ -129,7 +137,7 @@ public class ScreenSlideActivity extends FragmentActivity {
 					break;
 				}
 			}
-			return new ScreenSlidePageFragment(pages.get(position));
+			return new ScreenSlidePageFragment(pages.get(position), screenSlideActivity);
 		}
 
 		@Override
@@ -143,4 +151,21 @@ public class ScreenSlideActivity extends FragmentActivity {
 		Intent intent = new Intent(this, AuthorizationActivity.class);
 		startActivity(intent);
 	}
+
+	public String getScreenSlideAuthor() {
+		return author;
+	}
+
+	public String getScreenSlideTitle() {
+		return title;
+	}
+
+	public String getScreenSlideDbPath() {
+		return dbPath;
+	}
+	
+	public String getScreenSlidePath() {
+		return path;
+	}
+	
 }
