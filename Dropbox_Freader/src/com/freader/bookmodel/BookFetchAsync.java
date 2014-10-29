@@ -69,7 +69,7 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Void, ArrayList<CharSe
 				previous = add;
 			}
 			// If there's enough space on page for another paragraph, go on.
-			if (lines < params[0].lines_num - 1) { 
+			if (lines < params[0].lines_num - 2) { 
 				pageBuilder.append(add);
 				pageBuilder.append('\n');
 				add.setLength(0);
@@ -81,6 +81,8 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Void, ArrayList<CharSe
 				pageBuilder.append(add);
 				pages.add(pageBuilder.toString());
 				pageNumber++;
+				add.setLength(0);
+				add.append(" ");
 				pageBuilder.setLength(0);
 				lines = 0;
 			}
@@ -91,7 +93,7 @@ public class BookFetchAsync extends AsyncTask<ParsedBook, Void, ArrayList<CharSe
 			pageNumber++;
 		}
 		
-		
+		Log.w("BookFetch", "lines num " + String.valueOf(params[0].lines_num));
 		Log.w("BookFetch", "Fetched, last page " + pages.get(pages.size() - 4));
 		activity = params[0].activity;
 
