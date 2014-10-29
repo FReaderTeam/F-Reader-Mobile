@@ -1,11 +1,7 @@
 package com.freader.bookprototype;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,29 +11,25 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.SpannableString;
-import android.text.style.CharacterStyle;
-import android.text.style.ForegroundColorSpan;
-import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.util.Log;
-
 import com.dropbox.sync.android.DbxException;
 import com.freader.*;
-import com.freader.bookmodel.PagedBook;
-import com.freader.bookmodel.PagedBookListener;
+
 import com.freader.bookmodel.PagesHolder;
-import com.freader.bookmodel.ParsedBook;
 import com.freader.dao.PositionDao;
 
 import java.util.HashMap;
 
 public class ScreenSlideActivity extends FragmentActivity {
 
+	private static final String TITLE = "title";
+	private static final String NAME = "name";
+	private static final String P_HASH_MAP = "pHashMap";
+	private static final String PATH = "path";
+	private static final String DB_PATH = "dbPath";
+	private static final String PAGES_NUMBER = "pagesNumber";
 	private int numberOfPages;
 	private String author;
 	private String title;
@@ -49,26 +41,22 @@ public class ScreenSlideActivity extends FragmentActivity {
 	private TextView progressTextView;
 	private TextView authorAndTitleTextView;
 	private HashMap<Integer, Integer> paragraphsToPages;
-
-	// save and load page
-	private PositionDao positionDao;
 	private String dbPath;
 	private int firstPage;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.w("Test", "After activity call");
         setContentView(R.layout.activity_screen_slide);
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        title = getIntent().getStringExtra("title");
-        author = getIntent().getStringExtra("name");
-        paragraphsToPages = (HashMap<Integer, Integer>) getIntent().getSerializableExtra("pHashMap");
-        getIntent().getStringExtra("path");
-        dbPath = getIntent().getStringExtra("dbPath");
+        title = getIntent().getStringExtra(TITLE);
+        author = getIntent().getStringExtra(NAME);
+        paragraphsToPages = (HashMap<Integer, Integer>) getIntent().getSerializableExtra(P_HASH_MAP);
+        getIntent().getStringExtra(PATH);
+        dbPath = getIntent().getStringExtra(DB_PATH);
         pages = PagesHolder.getInstance().getPages();
-        numberOfPages = getIntent().getIntExtra("pagesNumber", 0);
+        numberOfPages = getIntent().getIntExtra(PAGES_NUMBER, 0);
         numbersOfPageForProgressTextView = numberOfPages - 1;
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
@@ -76,19 +64,14 @@ public class ScreenSlideActivity extends FragmentActivity {
         progressTextView = (TextView)findViewById(R.id.textViewProgress);
         authorAndTitleTextView = (TextView)findViewById(R.id.textViewAuthorAndTitle);
         authorAndTitleTextView.setText(author + " " + title);
-   
-        // save and load page
         try {
         	int paragraphNumber = (int)PositionDao.getPosition(AuthorizationActivity.datastore,dbPath);
 			firstPage = paragraphsToPages.get(paragraphNumber);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         mPager.setCurrentItem(firstPage);
         seekBar.setProgress(firstPage);
-        
-        
         mPager.setOnPageChangeListener(new OnPageChangeListener() {
 
             @Override
@@ -98,7 +81,6 @@ public class ScreenSlideActivity extends FragmentActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset,
                 int positionOffsetPixels) {
-            	
             	seekBar.setProgress(position);
             	progressTextView.setText(position + "/" + numbersOfPageForProgressTextView);
             }
@@ -122,7 +104,6 @@ public class ScreenSlideActivity extends FragmentActivity {
 
         	@Override
         	public void onStopTrackingTouch(SeekBar seekBar) {
-        		
         		mPager.setCurrentItem(seekBar.getProgress());
         		progressTextView.setText(seekBar.getProgress() + "/" + numbersOfPageForProgressTextView);
         	}
@@ -143,14 +124,11 @@ public class ScreenSlideActivity extends FragmentActivity {
 					try {
 						PositionDao.savePosition(AuthorizationActivity.datastore, dbPath, (long) entry.getKey());
 					} catch (DbxException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
-					} // Long - Int??
+					}
 					break;
 				}
-				System.out.println(entry.getKey() + "/" + entry.getValue());
 			}
-
 			return new ScreenSlidePageFragment(pages.get(position));
 		}
 

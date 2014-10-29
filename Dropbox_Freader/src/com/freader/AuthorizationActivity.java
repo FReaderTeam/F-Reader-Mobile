@@ -23,6 +23,11 @@ import static com.freader.dao.DropboxSettings.*;
 
 public class AuthorizationActivity extends Activity {
 
+	private static final String TITLE = "title";
+	private static final String NAME = "name";
+	private static final String PATH = "path";
+	private static final String DB_PATH = "dbPath";
+	
 	//Dropbox
 	public static DbxDatastoreManager dbxDatastoreManager;
 	private DbxAccountManager mDbxAccountManager;
@@ -152,13 +157,11 @@ public class AuthorizationActivity extends Activity {
 	void startPageActivity(String path, String dbPath, String title,
 			String name, ArrayList<String> paragraphs) {
 		Intent intent = new Intent(this, ScreenSlideWaiting.class);
-		intent.putExtra("title", title);
-		intent.putExtra("name", name);
+		intent.putExtra(TITLE, title);
+		intent.putExtra(NAME, name);
 		PagesHolder.getInstance().setParagraphs(paragraphs);
-		intent.putExtra("path", path);
-		intent.putExtra("dbPath",dbPath);
-		Log.w("Test", "Before activity call");
+		intent.putExtra(PATH, path);
+		intent.putExtra(DB_PATH,dbPath);
 		startActivity(intent);
-		
 	}
 }

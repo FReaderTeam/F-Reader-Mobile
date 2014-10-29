@@ -3,15 +3,12 @@ package com.freader.bookprototype;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.freader.AuthorizationActivity;
 import com.freader.R;
-import com.freader.bookmodel.PagedBook;
 import com.freader.bookmodel.ParsedBook;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -20,28 +17,30 @@ import com.freader.bookmodel.*;
 
 public class ScreenSlideWaiting extends FragmentActivity implements PagedBookListener{
 
-	private TextView textViewForGetSize;
+	private static final String TITLE = "title";
+	private static final String NAME = "name";
+	private static final String P_HASH_MAP = "pHashMap";
+	private static final String PATH = "path";
+	private static final String DB_PATH = "dbPath";
+	private static final String PAGES_NUMBER = "pagesNumber";
 	private ParsedBook parsedBook;
+	private TextView textViewForGetSize;
     private String author;
     private String title;
-    private CharSequence text;
-    private int size;
     private String bookFullPath;
     public String dbPath;
-    
+    private CharSequence text;
+    private int size;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.w("SSW","SSW");
         setContentView(R.layout.waiting_screen_slide);
-		title = getIntent().getStringExtra("title");
-        author = getIntent().getStringExtra("name");
-       
+		title = getIntent().getStringExtra(TITLE);
+        author = getIntent().getStringExtra(NAME);
         ArrayList<String> paragraphs = PagesHolder.getInstance().getParagraphs();
-        
-        bookFullPath = getIntent().getStringExtra("path");
-        dbPath = getIntent().getStringExtra("dbPath");
+        bookFullPath = getIntent().getStringExtra(PATH);
+        dbPath = getIntent().getStringExtra(DB_PATH);
         this.parsedBook = new ParsedBook(title, author, paragraphs);
         text = parsedBook.getFirstPages();
         textViewForGetSize = (TextView)findViewById(R.id.textViewForGetSize);
@@ -57,23 +56,20 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
         				textViewForGetSize.getLineHeight())*0.86);                                        		
         		parsedBook.initPages(size, textViewForGetSize);
             }
-            
         });
 	}
 
 	@Override
 	public void callback(ArrayList<CharSequence> pages, HashMap<Integer, Integer> hm) {
 		Intent intent = new Intent(this, ScreenSlideActivity.class);
-		intent.putExtra("title", title); 
-		intent.putExtra("name", author);
+		intent.putExtra(TITLE, title); 
+		intent.putExtra(NAME, author);
 		PagesHolder.getInstance().setPages(pages);
-		intent.putExtra("pagesNumber", pages.size());
-		intent.putExtra("pHashMap", hm);
-		intent.putExtra("path", bookFullPath);
-		intent.putExtra("dbPath", dbPath);
-		Log.w("Test", "Before activity call");
+		intent.putExtra(PAGES_NUMBER, pages.size());
+		intent.putExtra(P_HASH_MAP, hm);
+		intent.putExtra(PATH, bookFullPath);
+		intent.putExtra(DB_PATH, dbPath);
 		startActivity(intent);
-		
 	}
 
 }
