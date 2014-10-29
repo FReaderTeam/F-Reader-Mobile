@@ -1,4 +1,4 @@
-package ebook;
+package com.freader.parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,10 +17,6 @@ public class EBook {
 	 * The name of the file containing the processing e-book
 	 */
 	public String fileName;
-	/**
-	 * The name of the internal format of the e-book
-	 */
-	public EBookFormat format;
 	/**
 	 * List of authors of the e-book
 	 */

@@ -1,4 +1,4 @@
-package ebook;
+package com.freader.parser;
 
 /**
  * Class containing the data of the person, the author or translator

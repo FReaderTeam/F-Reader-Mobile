@@ -31,9 +31,8 @@ import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxException.Unauthorized;
 import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxFileSystem;
+import com.freader.parser.*;
 
-import ebook.*;
-import ebook.parser.*;
 
 public class BookCollectionFragment extends Fragment {
 
@@ -72,7 +71,7 @@ public class BookCollectionFragment extends Fragment {
 			public void onItemClick(AdapterView<?> a, View v, int position,
 					long id) {
 				mBooks.get(position).path.getName();
-				new DownloadBookTask(getActivity(), mBooks.get(position).path
+				new DownloadAndParseBookTask(getActivity(), mBooks.get(position).path
 						.getName(), mBooks.get(position).path, mAppPath,
 						BookCollectionFragment.this).execute();
 			}
@@ -170,57 +169,23 @@ public class BookCollectionFragment extends Fragment {
 		mBookListView.setAdapter(adapter);
 	}
 
-	public void callbackDBTask(String bookPath, String dbPath) {
-		// parse
-		AsyncParser ap = new AsyncParser();
-		ap.execute(bookPath);
-		EBook ebook = new EBook();
-		try {
-			ebook = ap.get();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
-		}
-		String name;
+	public void callbackDBTask(EBook ebook, String dbPath) {
+		StringBuilder name = new StringBuilder();
 		if (ebook.authors.get(0).middleName == null)
-			name = ebook.authors.get(0).firstName + " "
-					+ ebook.authors.get(0).lastName;
+			name.append(ebook.authors.get(0).firstName)
+			.append(" ")
+			.append(ebook.authors.get(0).lastName);
 		else
-			name = ebook.authors.get(0).firstName + " "
-					+ ebook.authors.get(0).middleName + " "
-					+ ebook.authors.get(0).lastName;
-		a_activity.startPageActivity(bookPath, dbPath, name, ebook.title,
+			name.append(ebook.authors.get(0).firstName)
+			.append(" ")
+			.append(ebook.authors.get(0).middleName)
+			.append(" ").
+			append(ebook.authors.get(0).lastName);
+		a_activity.startPageActivity(dbPath, dbPath, name.toString(), ebook.title,
 				ebook.parsedBook);
 	}
 
 	public void onCancelled() {
 
-	}
-
-	private class AsyncParser extends AsyncTask<String, Boolean, EBook> {
-		private ProgressDialog progressDialog;
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			progressDialog = new ProgressDialog(getActivity());
-			progressDialog.setMessage("Opening book. Please wait...");
-			progressDialog.setIndeterminate(true);
-			progressDialog.show();
-		}
-
-		@Override
-		protected EBook doInBackground(String... params) {
-			Parser parser = new InstantParser();
-			parser.parse(params[0]);
-			return parser.getEBoook();
-		}
-
-		@Override
-		protected void onPostExecute(EBook result) {
-			super.onPostExecute(result);
-			progressDialog.hide();
-		}
 	}
 }

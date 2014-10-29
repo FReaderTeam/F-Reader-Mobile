@@ -127,9 +127,11 @@ public class AuthorizationActivity extends Activity {
 		mLoggedIn = loggedIn;
 		if (loggedIn) {
 			try {
-				dbxDatastoreManager = DbxDatastoreManager
-						.forAccount(mDbxAccountManager.getLinkedAccount());
-				datastore = dbxDatastoreManager.openDefaultDatastore();
+				if(datastore == null){
+					dbxDatastoreManager = DbxDatastoreManager
+							.forAccount(mDbxAccountManager.getLinkedAccount());
+					datastore = dbxDatastoreManager.openDefaultDatastore();
+				}
 			} catch (Unauthorized e) {
 				showToast("Problem with authorization!");
 			} catch (DbxException e) {

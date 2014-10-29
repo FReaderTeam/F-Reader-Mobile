@@ -1,4 +1,4 @@
-package ebook.parser;
+package com.freader.parser;
 
 import java.util.regex.Pattern;
 
