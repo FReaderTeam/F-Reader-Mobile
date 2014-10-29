@@ -34,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.freader.*;
+import com.freader.bookmodel.PagesHolder;
 import com.freader.bookmodel.ParsedBook;
 
 import android.util.DisplayMetrics;
@@ -43,12 +44,18 @@ import android.view.MotionEvent;
 
 public class ScreenSlidePageFragment extends Fragment {
 
+	private static final String TITLE = "title";
+	private static final String NAME = "name";
+	private static final String PATH = "path";
+	private static final String DB_PATH = "dbPath";
+	
 	private CharSequence text;
 	private TextView mainTextTextView;
 	private View view;
 	private int selectedFontIndex;
 	private static final String FRAGMENT_FONT_SIZE = "fragmentFontSize";
 	private SharedPreferences sp;
+	private ScreenSlideActivity screenSlideActivity;
 	
 	private static float mScaleFactor = 25.0f;
 	StringBuilder sb = new StringBuilder();
@@ -59,9 +66,11 @@ public class ScreenSlidePageFragment extends Fragment {
 	private static double deltaPointerDown, deltaPointerMove;
 	private static float textSize;
 	
-	public ScreenSlidePageFragment(CharSequence text) {
+	public ScreenSlidePageFragment(CharSequence text, 
+			ScreenSlideActivity screenSlideActivity) {
 		super();
 		this.text = text;
+		this.screenSlideActivity = screenSlideActivity;
 	}
 
 	@SuppressLint("ClickableViewAccessibility")
@@ -73,6 +82,11 @@ public class ScreenSlidePageFragment extends Fragment {
 		mainTextTextView.setText(text);
 		sp = getActivity().getSharedPreferences(FRAGMENT_FONT_SIZE, 
                 Context.MODE_PRIVATE);
+		if(sp.contains(FRAGMENT_FONT_SIZE)) {
+			mainTextTextView.setTextSize(Integer.parseInt(
+					sp.getString(FRAGMENT_FONT_SIZE, String.valueOf(
+							(int)mainTextTextView.getTextSize()))));
+		}
 //		mainTextTextView.setOnTouchListener(new OnTouchListener() {
 //			
 //			@Override
@@ -148,7 +162,6 @@ public class ScreenSlidePageFragment extends Fragment {
 						Editor editor = sp.edit();
 						editor.putString(FRAGMENT_FONT_SIZE, String.valueOf(data.get(which)));
 						editor.apply();
-						mainTextTextView.setTextSize(Integer.parseInt(sp.getString(FRAGMENT_FONT_SIZE, "")));
 					}
 				});
 				adb.setPositiveButton("Save", new DialogInterface.OnClickListener() {
@@ -156,9 +169,16 @@ public class ScreenSlidePageFragment extends Fragment {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						
-						//TODO
-//						Intent intent = new Intent(getActivity(), ScreenSlideWaiting.class);
-//						startActivity(intent);
+						Log.w("GHGHGHGHGH", mainTextTextView.getTextSize() + "");
+						Intent intent = new Intent(screenSlideActivity, ScreenSlideWaiting.class);
+						intent.putExtra(NAME, screenSlideActivity.getScreenSlideAuthor());
+						intent.putExtra(TITLE, screenSlideActivity.getScreenSlideTitle());
+						intent.putExtra(PATH, screenSlideActivity.getScreenSlidePath());
+						intent.putExtra(DB_PATH, screenSlideActivity.getScreenSlideDbPath());
+						intent.putExtra("fontSize", selectedFontIndex + "");
+						// PagesHolder.getInstance().setParagraphs(paragraphs);
+
+						startActivity(intent);
 					}
 				});
 				adb.create().show();
