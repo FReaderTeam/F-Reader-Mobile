@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import static com.freader.dao.DropboxSettings.*;
 
 public class BookPickerActivity extends Activity {
 
@@ -37,6 +38,7 @@ public class BookPickerActivity extends Activity {
 
 	ListAdapter adapter;
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -151,7 +153,7 @@ public class BookPickerActivity extends Activity {
 					public void onClick(DialogInterface dialog, int arg1) {
 						Log.d(TAG, "cancelled");
 						Intent cancelIntent = new Intent();
-						setResult(2, cancelIntent);
+						setResult(PICKFILE_CANCEL_CODE, cancelIntent);
 						finish();
 					}
 				});
@@ -165,6 +167,7 @@ public class BookPickerActivity extends Activity {
 		case DIALOG_LOAD_FILE:
 			builder.setTitle("Choose book");
 			builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
+				@SuppressWarnings("deprecation")
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					chosenFile = fileList[which].file;

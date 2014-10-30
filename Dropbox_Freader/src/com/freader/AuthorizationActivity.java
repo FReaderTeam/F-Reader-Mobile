@@ -27,11 +27,11 @@ public class AuthorizationActivity extends Activity {
 	private static final String NAME = "name";
 	private static final String PATH = "path";
 	private static final String DB_PATH = "dbPath";
-	
-	//Dropbox
+
+	// Dropbox
 	public static DbxDatastoreManager dbxDatastoreManager;
 	private DbxAccountManager mDbxAccountManager;
-	
+
 	// Model
 	public static ArrayList<String> arr;
 	public static DbxDatastore datastore;
@@ -47,8 +47,8 @@ public class AuthorizationActivity extends Activity {
 		// Basic Android widgets
 		setClearListView();
 		createFolder();
-		mDbxAccountManager = DbxAccountManager.getInstance(getApplicationContext(),
-				APP_KEY, APP_SECRET);
+		mDbxAccountManager = DbxAccountManager.getInstance(
+				getApplicationContext(), APP_KEY, APP_SECRET);
 		if (!mDbxAccountManager.hasLinkedAccount())
 			mDbxAccountManager.startLink((Activity) this, REQUEST_LINK_TO_DBX);
 	}
@@ -70,13 +70,14 @@ public class AuthorizationActivity extends Activity {
 				logOut();
 			} else {
 				// Start the remote authentication
-				mDbxAccountManager.startLink((Activity) this, REQUEST_LINK_TO_DBX);
+				mDbxAccountManager.startLink((Activity) this,
+						REQUEST_LINK_TO_DBX);
 			}
 			return true;
 		case R.id.mUpload:
 			Intent pickerIntent = new Intent(AuthorizationActivity.this,
 					BookPickerActivity.class);
-			startActivityForResult(pickerIntent, PICKFILE_RESULT_CODE);
+			startActivityForResult(pickerIntent, PICKFILE_REQUEST_CODE);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -86,13 +87,14 @@ public class AuthorizationActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-		case PICKFILE_RESULT_CODE:
-			String mFilePath = data.getStringExtra("filePickerPath");
-			Log.e(mFilePath, "was choosen");
-			// TODO call upload async task
-			String [] s = mFilePath.split("/");
-			new UploadBookTask(AuthorizationActivity.this, s[s.length-1], mFilePath,
-					mDbxAccountManager).execute();
+		case PICKFILE_REQUEST_CODE:
+			if (resultCode != PICKFILE_CANCEL_CODE) {
+				String mFilePath = data.getStringExtra("filePickerPath");
+				Log.e(mFilePath, "was choosen");
+				String[] s = mFilePath.split("/");
+				new UploadBookTask(AuthorizationActivity.this, s[s.length - 1],
+						mFilePath, mDbxAccountManager).execute();
+			}
 			break;
 		case REQUEST_LINK_TO_DBX:
 			mLoggedIn = true;
@@ -127,7 +129,7 @@ public class AuthorizationActivity extends Activity {
 		mLoggedIn = loggedIn;
 		if (loggedIn) {
 			try {
-				if(datastore == null){
+				if (datastore == null) {
 					dbxDatastoreManager = DbxDatastoreManager
 							.forAccount(mDbxAccountManager.getLinkedAccount());
 					datastore = dbxDatastoreManager.openDefaultDatastore();
@@ -141,9 +143,11 @@ public class AuthorizationActivity extends Activity {
 			listOfBooks.setText("List of books:");
 			FragmentTransaction transaction = getFragmentManager()
 					.beginTransaction();
-			transaction.add(R.id.books_fragment, new BookCollectionFragment(
-					mDbxAccountManager, Environment.getExternalStorageDirectory()
-							+ "/FReader/Books", this));
+			transaction.add(
+					R.id.books_fragment,
+					new BookCollectionFragment(mDbxAccountManager, Environment
+							.getExternalStorageDirectory() + "/FReader/Books",
+							this));
 			transaction.commit();
 		} else {
 			menu.getItem(0).setTitle("Link from Dropbox");
@@ -163,7 +167,7 @@ public class AuthorizationActivity extends Activity {
 		intent.putExtra(NAME, name);
 		PagesHolder.getInstance().setParagraphs(paragraphs);
 		intent.putExtra(PATH, path);
-		intent.putExtra(DB_PATH,dbPath);
+		intent.putExtra(DB_PATH, dbPath);
 		startActivity(intent);
 	}
 }

@@ -10,6 +10,7 @@ public class DropboxSettings {
     public static final boolean USE_OAUTH1 = false;
     
     // REQUEST CODES
-	public  static final int PICKFILE_RESULT_CODE = 1;
+	public  static final int PICKFILE_REQUEST_CODE = 1;
 	public static final int REQUEST_LINK_TO_DBX = 0;
+	public static final int PICKFILE_CANCEL_CODE = 2;
 }
