@@ -22,9 +22,10 @@ public class ParsedBook extends Book{
 		paragraphs = p;
 	}
 	
-	public void initPages(int lines_num, TextView textView) {
+
+	
+	public void initPages(int lines_num) {
 		this.lines_num = lines_num - 2;
-		this.textView = textView;
 		Log.w("linesnum",String.valueOf(lines_num));
 		new BookFetchAsync().execute(this);
 	}

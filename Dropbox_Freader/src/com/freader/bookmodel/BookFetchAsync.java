@@ -9,6 +9,7 @@ import android.text.TextPaint;
 import android.util.Log;
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
+import android.os.Process;
 
 @SuppressLint("UseSparseArrays")
 public class BookFetchAsync extends
@@ -21,7 +22,7 @@ public class BookFetchAsync extends
 
 	@Override
 	protected ArrayList<CharSequence> doInBackground(ParsedBook... params) {
-
+		Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND + Process.THREAD_PRIORITY_MORE_FAVORABLE);
 		PageSplitter pageSplitter = new PageSplitter(
 				params[0].textView.getWidth(),
 				(int) (params[0].textView.getHeight() * 0.80),

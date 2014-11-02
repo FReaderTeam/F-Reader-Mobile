@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.os.HandlerThread;
+import android.os.Process;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +37,8 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
     public String dbPath;
     private CharSequence text;
     private int size;
+    
+    private long starttime;
     
     private String fontSizeString;
     private SharedPreferences sp;
@@ -80,14 +84,17 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
             public void onGlobalLayout() { 
                 textViewForGetSize.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
                 size = (int) Math.floor((textViewForGetSize.getHeight() / 
-        				textViewForGetSize.getLineHeight())*0.86);                                        		
-        		parsedBook.initPages(size, textViewForGetSize);
+        				textViewForGetSize.getLineHeight())*0.86);
+                starttime = System.nanoTime();
+                parsedBook.setTextView(textViewForGetSize);
+        		parsedBook.initPages(size);
             }
         });
 	}
 
 	@Override
 	public void callback(ArrayList<CharSequence> pages, HashMap<Integer, Integer> hm) {
+		Log.w("freader", String.valueOf(starttime - System.nanoTime()));
 		Intent intent = new Intent(this, ScreenSlideActivity.class);
 		intent.putExtra(TITLE, title); 
 		intent.putExtra(NAME, author);
