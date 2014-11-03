@@ -22,13 +22,6 @@ public class ParsedBook extends Book{
 		paragraphs = p;
 	}
 	
-
-	
-	public void initPages(int lines_num) {
-		this.lines_num = lines_num - 2;
-		Log.w("linesnum",String.valueOf(lines_num));
-		new BookFetchAsync().execute(this);
-	}
 	
 	public CharSequence getFirstPages(){
 		CharSequence result = " ";

@@ -35,7 +35,7 @@ public class BookFetchRunnable extends HandlerThread {
 		for (int i = 0; i < parsedBook.paragraphs.size(); i++) {
 			paragraphsToPages.put(i, pageSplitter.getPageNumber());
 			pageSplitter
-					.append("\n\t" + parsedBook.paragraphs.get(i), textPaint);
+					.appendParagraph(parsedBook.paragraphs.get(i), textPaint);
 		}
 
 		Log.w("freader",paragraphsToPages.toString());

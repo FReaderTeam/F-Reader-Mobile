@@ -5,7 +5,6 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.style.StyleSpan;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,22 +33,27 @@ public class PageSplitter {
     	return pages.size();
     }
     
-    public void append(String text, TextPaint textPaint) {
-        textLineHeight = (int) Math.ceil(textPaint.getFontMetrics(null) * lineSpacingMultiplier + lineSpacingExtra);
-        String[] paragraphs = text.split("\n", -1);
-        int i;
-        for (i = 0; i < paragraphs.length - 1; i++) {
-            appendText(paragraphs[i], textPaint);
-            appendNewLine();
-        }
-        appendText(paragraphs[i], textPaint);
+    
+    public void appendParagraph(String text, TextPaint textPaint){
+    	textLineHeight = (int) Math.ceil(textPaint.getFontMetrics(null) * lineSpacingMultiplier + lineSpacingExtra);
+        appendNewLine();
+        appendWord("\t", textPaint);
+        appendText(text, textPaint);
+            
+       
     }
+    
 
     private void appendText(String text, TextPaint textPaint) {
         String[] words = text.split(" ", -1);
         int i;
         for (i = 0; i < words.length - 1; i++) {
-            appendWord(words[i] + " ", textPaint);
+        	if (words[i].equals("%title"))
+        		appendWord("\t", textPaint);
+        	else if (words[i].equals("%new-section"))
+        		endPage();
+        	else
+        		appendWord(words[i] + " ", textPaint);
         }
         appendWord(words[i], textPaint);
     }
@@ -60,11 +64,15 @@ public class PageSplitter {
         appendLineToPage(textLineHeight);
     }
 
+    private void endPage(){
+    	pages.add(currentPage);
+        currentPage = new SpannableStringBuilder();
+        pageContentHeight = 0;
+    }
+    
     private void checkForPageEnd() {
         if (pageContentHeight + currentLineHeight > pageHeight) {
-            pages.add(currentPage);
-            currentPage = new SpannableStringBuilder();
-            pageContentHeight = 0;
+            endPage();
         }
     }
 

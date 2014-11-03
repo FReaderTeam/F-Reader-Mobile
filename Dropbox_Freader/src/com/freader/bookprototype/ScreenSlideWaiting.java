@@ -21,7 +21,7 @@ import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.TextView;
 import com.freader.bookmodel.*;
 
-public class ScreenSlideWaiting extends FragmentActivity implements PagedBookListener{
+public class ScreenSlideWaiting extends FragmentActivity{
 
 	private static final String TITLE = "title";
 	private static final String NAME = "name";
@@ -83,18 +83,18 @@ public class ScreenSlideWaiting extends FragmentActivity implements PagedBookLis
             @Override 
             public void onGlobalLayout() { 
                 textViewForGetSize.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
-                size = (int) Math.floor((textViewForGetSize.getHeight() / 
-        				textViewForGetSize.getLineHeight())*0.86);
                 starttime = System.nanoTime();
                 parsedBook.setTextView(textViewForGetSize);
-        		parsedBook.initPages(size);
+                BookFetchRunnable bfr = new BookFetchRunnable(parsedBook);
+                bfr.setPriority(Process.THREAD_PRIORITY_BACKGROUND + Process.THREAD_PRIORITY_MORE_FAVORABLE);
+                bfr.start();
             }
         });
 	}
 
-	@Override
+
 	public void callback(ArrayList<CharSequence> pages, HashMap<Integer, Integer> hm) {
-		Log.w("freader", String.valueOf(starttime - System.nanoTime()));
+		Log.w("freader", String.valueOf(System.nanoTime() - starttime));
 		Intent intent = new Intent(this, ScreenSlideActivity.class);
 		intent.putExtra(TITLE, title); 
 		intent.putExtra(NAME, author);
