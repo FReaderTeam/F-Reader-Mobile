@@ -61,7 +61,7 @@ public class ScreenSlideActivity extends FragmentActivity {
         dbPath = getIntent().getStringExtra(DB_PATH);
         pages = PagesHolder.getInstance().getPages();
         numberOfPages = getIntent().getIntExtra(PAGES_NUMBER, 0);
-        numbersOfPageForProgressTextView = numberOfPages - 1;
+        numbersOfPageForProgressTextView = numberOfPages;
         mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(mPagerAdapter);
         seekBar = (SeekBar)findViewById(R.id.seekBarProgress);
@@ -86,7 +86,7 @@ public class ScreenSlideActivity extends FragmentActivity {
             public void onPageScrolled(int position, float positionOffset,
                 int positionOffsetPixels) {
             	seekBar.setProgress(position);
-            	progressTextView.setText(position + "/" + numbersOfPageForProgressTextView);
+            	progressTextView.setText(position + 1 + "/" + numbersOfPageForProgressTextView);
             }
 
             @Override
@@ -94,7 +94,7 @@ public class ScreenSlideActivity extends FragmentActivity {
             }
           });
         
-        seekBar.setMax(numbersOfPageForProgressTextView);
+        seekBar.setMax(numbersOfPageForProgressTextView - 1);
         seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
         	
         	@Override
@@ -109,10 +109,10 @@ public class ScreenSlideActivity extends FragmentActivity {
         	@Override
         	public void onStopTrackingTouch(SeekBar seekBar) {
         		mPager.setCurrentItem(seekBar.getProgress());
-        		progressTextView.setText(seekBar.getProgress() + "/" + numbersOfPageForProgressTextView);
+        		progressTextView.setText(seekBar.getProgress() + 1 + "/" + numbersOfPageForProgressTextView);
         	}
         });
-        progressTextView.setText(firstPage + "/" + numbersOfPageForProgressTextView);
+        progressTextView.setText(firstPage + 1 + "/" + numbersOfPageForProgressTextView);
         screenSlideActivity = this;
         
         String rrr = screenSlideActivity.getScreenSlideAuthor();

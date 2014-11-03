@@ -70,14 +70,30 @@ public class AuthorizationActivity extends Activity {
 				logOut();
 			} else {
 				// Start the remote authentication
-				mDbxAccountManager.startLink((Activity) this,
-						REQUEST_LINK_TO_DBX);
+				setClearListView();
+				createFolder();
+				mDbxAccountManager = DbxAccountManager.getInstance(
+						getApplicationContext(), APP_KEY, APP_SECRET);
 			}
 			return true;
 		case R.id.mUpload:
 			Intent pickerIntent = new Intent(AuthorizationActivity.this,
 					BookPickerActivity.class);
 			startActivityForResult(pickerIntent, PICKFILE_REQUEST_CODE);
+			return true;
+		case R.id.refreshLibrary:
+			//mDbxAccountManager = DbxAccountManager.getInstance(
+					//getApplicationContext(), APP_KEY, APP_SECRET);
+			setClearListView();
+			listOfBooks.setText("List of books:");
+			FragmentTransaction transaction = getFragmentManager()
+			.beginTransaction();
+			transaction.add(
+			R.id.books_fragment,
+			new BookCollectionFragment(mDbxAccountManager, Environment
+					.getExternalStorageDirectory() + "/FReader/Books",
+					this));
+			transaction.commit();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

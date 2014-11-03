@@ -4,4 +4,5 @@
     <string name="upload_book">Upload book</string>
     <string name="unlink_from_dropbox">Unlink from dropbox</string>
     <string name="list_of_books">List of books:</string>
+    <string name="refresh_library">Refresh library</string>
 </resources>
