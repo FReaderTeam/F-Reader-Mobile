@@ -82,18 +82,9 @@ public class AuthorizationActivity extends Activity {
 			startActivityForResult(pickerIntent, PICKFILE_REQUEST_CODE);
 			return true;
 		case R.id.refreshLibrary:
-			//mDbxAccountManager = DbxAccountManager.getInstance(
-					//getApplicationContext(), APP_KEY, APP_SECRET);
 			setClearListView();
 			listOfBooks.setText("List of books:");
-			FragmentTransaction transaction = getFragmentManager()
-			.beginTransaction();
-			transaction.add(
-			R.id.books_fragment,
-			new BookCollectionFragment(mDbxAccountManager, Environment
-					.getExternalStorageDirectory() + "/FReader/Books",
-					this));
-			transaction.commit();
+			openBookFragment();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -157,18 +148,22 @@ public class AuthorizationActivity extends Activity {
 			}
 			menu.getItem(0).setTitle("Unlink from Dropbox");
 			listOfBooks.setText("List of books:");
-			FragmentTransaction transaction = getFragmentManager()
-					.beginTransaction();
-			transaction.add(
-					R.id.books_fragment,
-					new BookCollectionFragment(mDbxAccountManager, Environment
-							.getExternalStorageDirectory() + "/FReader/Books",
-							this));
-			transaction.commit();
+			openBookFragment();
 		} else {
 			menu.getItem(0).setTitle("Link from Dropbox");
 			listOfBooks.setText(" ");
 		}
+	}
+	
+	private void openBookFragment(){
+		FragmentTransaction transaction = getFragmentManager()
+				.beginTransaction();
+		transaction.add(
+				R.id.books_fragment,
+				new BookCollectionFragment(mDbxAccountManager, Environment
+						.getExternalStorageDirectory() + "/FReader/Books",
+						this));
+		transaction.commit();
 	}
 
 	private void showToast(String msg) {
