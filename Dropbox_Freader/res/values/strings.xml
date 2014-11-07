@@ -3,6 +3,35 @@
     <string name="app_name">F-Reader</string>
     <string name="upload_book">Upload book</string>
     <string name="unlink_from_dropbox">Unlink from dropbox</string>
+    <string name="link_from_dropbox">Link from Dropbox</string>
     <string name="list_of_books">List of books:</string>
     <string name="refresh_library">Refresh library</string>
+    <string name="save">Save</string>
+    <string name="select_font_size">Select font size</string>
+    
+    <string name="problem_with_authorization">Problem with authorization!</string>
+    <string name="problem_with_opening_datastore">Problem with opening datastore!</string>
+    
+    <string name="delete">Delete</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="delete_was_chancelled">Deleting was cancelled!</string>
+    <string name="successful">Successful</string>
+    
+    <string name="downloading">Downloading</string>
+    <string name="cancel">Cancel</string>
+    <string name="canceled">Canceled</string>
+    <string name="file_not_found">File not found!</string>
+    <string name="error">Error!</string>
+    <string name="can_not_write_file_to_storage">Can not write file to storage!</string>    
+    
+    <string name="up">Up</string>
+    <string name="choose_book">Choose book</string>
+    
+    <string name="searching_books">Searching books</string>
+    
+    <string name="uploading">Uploading </string>
+    <string name="uploading_successful">Uploading successful!</string>
+    
 </resources>

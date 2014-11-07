@@ -27,8 +27,9 @@ public class GetBookListTask extends AsyncTask<Void, Long, Boolean> {
 		this.booksFragment = fragment;
 		// Set a Dialog while searching books.
 		mDialog = new ProgressDialog(fragment.getActivity());
-		mDialog.setMessage("Searching books");
-		mDialog.setButton("Cancel", new OnClickListener() {
+		
+		mDialog.setMessage(booksFragment.getString(R.string.searching_books));
+		mDialog.setButton(booksFragment.getString(R.string.cancel), new OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				mCanceled = true;
 				// booksFragment.onCancelled();

@@ -46,9 +46,31 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f040000;
-        public static final int list_of_books=0x7f040003;
-        public static final int refresh_library=0x7f040004;
+        public static final int are_you_sure=0x7f04000b;
+        public static final int can_not_write_file_to_storage=0x7f040015;
+        public static final int cancel=0x7f040011;
+        public static final int canceled=0x7f040012;
+        public static final int choose_book=0x7f040017;
+        public static final int delete=0x7f04000a;
+        public static final int delete_was_chancelled=0x7f04000e;
+        public static final int downloading=0x7f040010;
+        public static final int error=0x7f040014;
+        public static final int file_not_found=0x7f040013;
+        public static final int link_from_dropbox=0x7f040003;
+        public static final int list_of_books=0x7f040004;
+        public static final int no=0x7f04000d;
+        public static final int problem_with_authorization=0x7f040008;
+        public static final int problem_with_opening_datastore=0x7f040009;
+        public static final int refresh_library=0x7f040005;
+        public static final int save=0x7f040006;
+        public static final int searching_books=0x7f040018;
+        public static final int select_font_size=0x7f040007;
+        public static final int successful=0x7f04000f;
         public static final int unlink_from_dropbox=0x7f040002;
+        public static final int up=0x7f040016;
         public static final int upload_book=0x7f040001;
+        public static final int uploading=0x7f040019;
+        public static final int uploading_successful=0x7f04001a;
+        public static final int yes=0x7f04000c;
     }
 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">F-Reader</string>
+    <string name="upload_book">Завантажити книгу</string>
+    <string name="unlink_from_dropbox">Вийти з Dropbox</string>
+    <string name="list_of_books">Перелік книг:</string>
+    <string name="refresh_library">Оновити бібліотеку</string>
+    <string name="save">Зберегти</string>
+    <string name="select_font_size">Вибрати шрифт</string>
+    
+    <string name="problem_with_authorization">Помилка авторизації!</string>
+    <string name="problem_with_opening_datastore">Помилка відкриття бази даних!</string>
+    
+    <string name="delete">Видалити</string>
+    <string name="are_you_sure">Ви впевнені?</string>
+    <string name="yes">Так</string>
+    <string name="no">Ні</string>
+    <string name="delete_was_chancelled">Видалення було скасоване!</string>
+    <string name="successful">Успішно</string>
+    
+    <string name="downloading">Скачування</string>
+    <string name="cancel">Скасування</string>
+    <string name="canceled">Скасовано</string>
+    <string name="file_not_found">Файл не знайдено!</string>
+    <string name="error">Помилка!</string>
+    <string name="can_not_write_file_to_storage">Неможливо записати файл в сховище!</string>    
+    
+    <string name="up">Вгору</string>
+    <string name="choose_book">Виберіть книгу</string>
+    
+    <string name="searching_books">Пошук книг</string>
+    
+    <string name="uploading">Завантаження </string>
+    <string name="uploading_successful">Завантаження пройшла успішно!</string>
+</resources>

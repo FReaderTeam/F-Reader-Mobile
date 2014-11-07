@@ -88,16 +88,16 @@ public class BookCollectionFragment extends Fragment {
 
 		// Alert dialog
 		confirmDialog = new AlertDialog.Builder(this.getActivity());
-		confirmDialog.setMessage("Are you sure?");
-		confirmDialog.setPositiveButton("Yes", new OnClickListener() {
+		confirmDialog.setMessage(R.string.are_you_sure);
+		confirmDialog.setPositiveButton(R.string.yes, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				deleteBook();
 			}
 		});
-		confirmDialog.setNegativeButton("No", new OnClickListener() {
+		confirmDialog.setNegativeButton(R.string.no, new OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				Toast.makeText(getActivity(), "Deleting was cancelled!",
+				Toast.makeText(getActivity(), R.string.delete_was_chancelled,
 						Toast.LENGTH_LONG).show();
 			}
 		});
@@ -110,7 +110,7 @@ public class BookCollectionFragment extends Fragment {
 			DbxFileSystem sys = DbxFileSystem.forAccount(mDbxAcctMgr
 					.getLinkedAccount());
 			sys.delete(mBooks.get(listBookPosition).path);
-			Toast.makeText(getActivity(), "Succesfull!", Toast.LENGTH_LONG)
+			Toast.makeText(getActivity(), R.string.successful, Toast.LENGTH_LONG)
 					.show();
 			this.onResume();
 		} catch (Unauthorized e) {
@@ -129,7 +129,7 @@ public class BookCollectionFragment extends Fragment {
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		menu.add("Delete");
+		menu.add(R.string.delete);
 	}
 
 	@Override

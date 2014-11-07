@@ -26,7 +26,7 @@ public class AuthorizationActivity extends Activity {
 	private static final String TITLE = "title";
 	private static final String NAME = "name";
 	private static final String PATH = "path";
-	private static final String DB_PATH = "dbPath";
+	private static final String DB_PATH = "dbPath";	
 
 	// Dropbox
 	public static DbxDatastoreManager dbxDatastoreManager;
@@ -83,8 +83,15 @@ public class AuthorizationActivity extends Activity {
 			return true;
 		case R.id.refreshLibrary:
 			setClearListView();
-			listOfBooks.setText("List of books:");
-			openBookFragment();
+			listOfBooks.setText(R.string.list_of_books);
+			FragmentTransaction transaction = getFragmentManager()
+					.beginTransaction();
+			transaction.add(
+					R.id.books_fragment,
+					new BookCollectionFragment(mDbxAccountManager, Environment
+							.getExternalStorageDirectory() + "/FReader/Books",
+							this));
+			transaction.commit();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -142,28 +149,24 @@ public class AuthorizationActivity extends Activity {
 					datastore = dbxDatastoreManager.openDefaultDatastore();
 				}
 			} catch (Unauthorized e) {
-				showToast("Problem with authorization!");
+				showToast(getString(R.string.problem_with_authorization));
 			} catch (DbxException e) {
-				showToast("Problem with opening datastore!");
+				showToast(getString(R.string.problem_with_opening_datastore));
 			}
-			menu.getItem(0).setTitle("Unlink from Dropbox");
-			listOfBooks.setText("List of books:");
-			openBookFragment();
+			menu.getItem(0).setTitle(R.string.unlink_from_dropbox);
+			listOfBooks.setText(R.string.list_of_books);
+			FragmentTransaction transaction = getFragmentManager()
+					.beginTransaction();
+			transaction.add(
+					R.id.books_fragment,
+					new BookCollectionFragment(mDbxAccountManager, Environment
+							.getExternalStorageDirectory() + "/FReader/Books",
+							this));
+			transaction.commit();
 		} else {
-			menu.getItem(0).setTitle("Link from Dropbox");
+			menu.getItem(0).setTitle(R.string.link_from_dropbox);
 			listOfBooks.setText(" ");
 		}
-	}
-	
-	private void openBookFragment(){
-		FragmentTransaction transaction = getFragmentManager()
-				.beginTransaction();
-		transaction.add(
-				R.id.books_fragment,
-				new BookCollectionFragment(mDbxAccountManager, Environment
-						.getExternalStorageDirectory() + "/FReader/Books",
-						this));
-		transaction.commit();
 	}
 
 	private void showToast(String msg) {

@@ -32,7 +32,7 @@ public class UploadBookTask extends AsyncTask<Void, Long, Boolean> {
 
 		mDialog = new ProgressDialog(mContext);
 		mDialog.setMax(100);
-		mDialog.setMessage("Uploading " + mBookName);
+		mDialog.setMessage(mContext.getString(R.string.uploading) + mBookName);
 		mDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		mDialog.setProgress(0);
 
@@ -74,7 +74,7 @@ public class UploadBookTask extends AsyncTask<Void, Long, Boolean> {
 	protected void onPostExecute(Boolean result) {
 		mDialog.dismiss();
 		if (result) {
-			Toast msg = Toast.makeText(mContext, "Uploading successfull!",
+			Toast msg = Toast.makeText(mContext, R.string.uploading_successful,
 					Toast.LENGTH_LONG);
 			msg.show();
 		}

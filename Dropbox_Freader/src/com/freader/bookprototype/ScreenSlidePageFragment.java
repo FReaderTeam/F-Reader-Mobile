@@ -87,61 +87,13 @@ public class ScreenSlidePageFragment extends Fragment {
 					sp.getString(FRAGMENT_FONT_SIZE, String.valueOf(
 							(int)mainTextTextView.getTextSize()))));
 		}
-//		mainTextTextView.setOnTouchListener(new OnTouchListener() {
-//			
-//			@Override
-//			public boolean onTouch(View v, MotionEvent event) {
-//				// событие
-//				int actionMask = event.getActionMasked();
-//				// индекс касания
-//				int pointerIndex = event.getActionIndex();
-//				// число касаний
-//				int pointerCount = event.getPointerCount();
-//
-//				float deltaX, deltaY;
-//				switch (actionMask) {
-//				case MotionEvent.ACTION_DOWN:				
-//					pinch = false;
-//					break;// первое касание
-//				case MotionEvent.ACTION_POINTER_DOWN: // последующие касания
-//					pinch = true;
-//					deltaX = event.getX(0) - event.getX(1);
-//					deltaY = event.getY(0) - event.getY(1);
-//					deltaPointerDown = Math.sqrt(deltaX*deltaX+deltaY*deltaY);
-//					Log.d("PINCH", "ACTION_POINTER_DOWN");
-//					break;
-//				case MotionEvent.ACTION_UP: // прерывание последнего касания
-//					pinch = false;
-//					break;
-//				case MotionEvent.ACTION_POINTER_UP: // прерывания касаний
-//					pinch = false;
-//					Log.d("PINCH", "ACTION_POINTER_UP");
-//					break;
-//
-//				case MotionEvent.ACTION_MOVE: // движение
-//					Log.d("PINCH", "ACTION_POINTER_MOVE");
-//					if (pinch) {
-//						deltaX = event.getX(0) - event.getX(1);
-//						deltaY = event.getY(0) - event.getY(1);
-//						deltaPointerMove = Math.sqrt(deltaX*deltaX+deltaY*deltaY);
-//						float tempTextSize = getFontSize(getActivity())/textSize;
-//						if(Math.abs(tempTextSize/textSize)>=0.7||Math.abs(tempTextSize/textSize)<=0.2){
-//							mainTextTextView.setTextSize(tempTextSize);
-//							textSize = tempTextSize;
-//						}
-//					}
-//					break;
-//				}
-//				return true;
-//			}
-//		});
-		
+
 		mainTextTextView.setOnLongClickListener(new OnLongClickListener() {
 			
 			@Override
 			public boolean onLongClick(View v) {
 				Builder adb = new AlertDialog.Builder(getActivity());
-				adb.setTitle("Select font size");
+				adb.setTitle(R.string.select_font_size);
 				final List<String> data = Arrays.asList("8", "9", "10", 
 						"11", "12", "13", "14", "15", "16", "17", "18", "19", "20", 
 						"21", "22", "23", "24", "25", "26", "27", "28", "29", "30", 
@@ -164,20 +116,17 @@ public class ScreenSlidePageFragment extends Fragment {
 						editor.apply();
 					}
 				});
-				adb.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+				
+				adb.setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
 					
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						
-						Log.w("GHGHGHGHGH", mainTextTextView.getTextSize() + "");
 						Intent intent = new Intent(screenSlideActivity, ScreenSlideWaiting.class);
 						intent.putExtra(NAME, screenSlideActivity.getScreenSlideAuthor());
 						intent.putExtra(TITLE, screenSlideActivity.getScreenSlideTitle());
 						intent.putExtra(PATH, screenSlideActivity.getScreenSlidePath());
 						intent.putExtra(DB_PATH, screenSlideActivity.getScreenSlideDbPath());
 						intent.putExtra("fontSize", selectedFontIndex + "");
-						// PagesHolder.getInstance().setParagraphs(paragraphs);
-
 						startActivity(intent);
 					}
 				});

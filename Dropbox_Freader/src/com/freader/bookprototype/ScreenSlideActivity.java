@@ -67,7 +67,7 @@ public class ScreenSlideActivity extends FragmentActivity {
         seekBar = (SeekBar)findViewById(R.id.seekBarProgress);
         progressTextView = (TextView)findViewById(R.id.textViewProgress);
         authorAndTitleTextView = (TextView)findViewById(R.id.textViewAuthorAndTitle);
-        authorAndTitleTextView.setText(author + " " + title);
+        authorAndTitleTextView.setText(author + " " + "\"" + title + "\"");
         try {
         	int paragraphNumber = (int)PositionDao.getPosition(AuthorizationActivity.datastore,dbPath);
 			firstPage = paragraphsToPages.get(paragraphNumber);
@@ -114,9 +114,6 @@ public class ScreenSlideActivity extends FragmentActivity {
         });
         progressTextView.setText(firstPage + 1 + "/" + numbersOfPageForProgressTextView);
         screenSlideActivity = this;
-        
-        String rrr = screenSlideActivity.getScreenSlideAuthor();
-        Log.w("FAFAFAFAFAF", rrr);
 	}
 
 	private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {

@@ -31,7 +31,6 @@ import com.dropbox.sync.android.DbxPath;
 import com.freader.parser.EBook;
 import com.freader.parser.SimpleFb2Parser;
 
-
 public class DownloadAndParseBookTask extends AsyncTask<Void, Long, Boolean> {
 
 	private Context mContext;
@@ -61,11 +60,11 @@ public class DownloadAndParseBookTask extends AsyncTask<Void, Long, Boolean> {
 		if (file.exists() && file.length() > 0)
 			needToDownload = false;
 		else {
-			mDialog.setMessage("Downloading");
-			mDialog.setButton("Cancel", new OnClickListener() {
+			mDialog.setMessage(mContext.getString(R.string.downloading));
+			mDialog.setButton(mContext.getString(R.string.cancel), new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					mCanceled = true;
-					mErrorMsg = "Canceled";
+					mErrorMsg = mContext.getString(R.string.canceled);
 					// delete book from storage
 					File file = new File(appFolderPath + "/" + mBookName);
 					file.delete();
@@ -99,16 +98,16 @@ public class DownloadAndParseBookTask extends AsyncTask<Void, Long, Boolean> {
 			eBook = SimpleFb2Parser.parse(bookContent);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			mErrorMsg = "File not found!";
+			mErrorMsg = mContext.getString(R.string.file_not_found);
 			return false;
 		} catch (Unauthorized e) {
-			mErrorMsg = "Problem with authorization!";
+			mErrorMsg = mContext.getString(R.string.problem_with_authorization);
 			return false;
 		} catch (DbxException e) {
-			mErrorMsg = "Error!";
+			mErrorMsg = mContext.getString(R.string.error);
 			return false;
 		} catch (IOException e) {
-			mErrorMsg = "Can't write file to storage!";
+			mErrorMsg = mContext.getString(R.string.can_not_write_file_to_storage);
 			return false;
 		} finally {
 			if (needToDownload)
@@ -124,8 +123,13 @@ public class DownloadAndParseBookTask extends AsyncTask<Void, Long, Boolean> {
 			// Couldn't download it, so show an error
 			showToast(mErrorMsg);
 		} else {
-			if (needToDownload)
-				showToast("Succesfull!" + mBookPath.toString());
+			if (needToDownload){
+				//showToast(R.string.successful + mBookPath.toString());
+				Toast error = Toast.makeText(mContext, 
+						R.string.successful + mBookPath.toString(), 
+						Toast.LENGTH_LONG);
+				error.show();
+			}
 			fragment.callbackDBTask(eBook, mBookPath.toString());
 		}
 	}

@@ -95,7 +95,7 @@ public class BookPickerActivity extends Activity {
 				for (int i = 0; i < fileList.length; i++) {
 					temp[i + 1] = fileList[i];
 				}
-				temp[0] = new Item("Up", R.drawable.directory_up);
+				temp[0] = new Item(getString(R.string.up), R.drawable.directory_up); // !!!!!!!!
 				fileList = temp;
 			}
 		} else {
@@ -148,7 +148,7 @@ public class BookPickerActivity extends Activity {
 		AlertDialog.Builder builder = new Builder(this);
 
 		builder.setCancelable(false);
-		builder.setNegativeButton("Cancel",
+		builder.setNegativeButton(R.string.cancel,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int arg1) {
 						Log.d(TAG, "cancelled");
@@ -165,7 +165,7 @@ public class BookPickerActivity extends Activity {
 
 		switch (id) {
 		case DIALOG_LOAD_FILE:
-			builder.setTitle("Choose book");
+			builder.setTitle(R.string.choose_book);
 			builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
 				@SuppressWarnings("deprecation")
 				@Override
@@ -189,7 +189,7 @@ public class BookPickerActivity extends Activity {
 					}
 
 					// Checks if 'up' was clicked
-					else if (chosenFile.equalsIgnoreCase("up") && !sel.exists()) {
+					else if (chosenFile.equalsIgnoreCase(getString(R.string.up)) && !sel.exists()) {
 
 						// present directory removed from list
 						String s = str.remove(str.size() - 1);
