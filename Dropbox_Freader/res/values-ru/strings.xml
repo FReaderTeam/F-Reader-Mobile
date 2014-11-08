@@ -3,7 +3,7 @@
     <string name="app_name">F-Reader</string>
     <string name="upload_book">Загрузить книгу</string>
     <string name="unlink_from_dropbox">Выйти из Dropbox</string>
-    <string name="list_of_books">Список книг:</string>
+    <string name="list_of_books">Мои книги:</string>
     <string name="refresh_library">Обновить библиотеку</string>
     <string name="save">Сохранить</string>
     <string name="select_font_size">Выбрать шрифт</string>
@@ -31,5 +31,6 @@
     <string name="searching_books">Поиск книг</string>
     
     <string name="uploading">Загрузка </string>
-    <string name="uploading_successful">Загрузка прошла успешно!</string>
+    <string name="uploading_successful">Загрузка прошла успешно!</string>    
+    
 </resources>

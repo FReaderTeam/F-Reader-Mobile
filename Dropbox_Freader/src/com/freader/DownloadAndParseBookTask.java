@@ -4,13 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 
@@ -19,7 +15,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
-import android.provider.DocumentsContract.Document;
 import android.widget.Toast;
 
 import com.dropbox.sync.android.DbxAccountManager;
@@ -67,7 +62,7 @@ public class DownloadAndParseBookTask extends AsyncTask<Void, Long, Boolean> {
 					mErrorMsg = mContext.getString(R.string.canceled);
 					// delete book from storage
 					File file = new File(appFolderPath + "/" + mBookName);
-					file.delete();
+					file.delete();					
 				}
 			});
 			mDialog.show();

@@ -22,8 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
@@ -182,9 +180,7 @@ public class BookCollectionFragment extends Fragment {
 														// somewhere
 			// else, like datastore
 		}
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-				android.R.layout.simple_list_item_1, fileNames);
-		mBookListView.setAdapter(adapter);
+		mBookListView.setAdapter(new BookListAdapter(getActivity(), mBooks, mAppPath));
 	}
 
 	public void callbackDBTask(EBook ebook, String dbPath) {
