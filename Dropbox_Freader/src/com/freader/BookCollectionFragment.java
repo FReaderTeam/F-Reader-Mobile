@@ -10,7 +10,10 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -20,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
@@ -61,8 +65,20 @@ public class BookCollectionFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View view = inflater
 				.inflate(R.layout.book_collection, container, false);
+		SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(
+				 R.id.refresh_book_collection);
+		mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.BLACK, Color.BLACK, Color.BLACK);
+	    mSwipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+	    	
+			@Override
+			public void onRefresh() {
+				// TODO Auto-generated method stub
+				updateBook();
+			}
+		});
+	    
 		mBookListView = (ListView) view.findViewById(R.id.book_list);
-
+		
 		mBookListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -104,6 +120,10 @@ public class BookCollectionFragment extends Fragment {
 		return view;
 	}
 
+	private void updateBook(){
+		this.onResume();
+	}
+	
 	private void deleteBook() {
 		// deleting from DropBox
 		try {
