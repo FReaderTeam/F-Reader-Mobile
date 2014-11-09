@@ -1,36 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">F-Reader</string>
     <string name="upload_book">Загрузить книгу</string>
     <string name="unlink_from_dropbox">Выйти из Dropbox</string>
+    <string name="link_from_dropbox">Войти в Dropbox</string>
     <string name="list_of_books">Мои книги:</string>
     <string name="refresh_library">Обновить библиотеку</string>
     <string name="save">Сохранить</string>
     <string name="select_font_size">Выбрать шрифт</string>
-    
     <string name="problem_with_authorization">Ошибка авторизации!</string>
     <string name="problem_with_opening_datastore">Ошибка открытия базы данных!</string>
-    
     <string name="delete">Удалить</string>
     <string name="are_you_sure">Вы уверены?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="delete_was_chancelled">Удаление было отменено!</string>
     <string name="successful">Успешно</string>
-    
     <string name="downloading">Скачивание</string>
     <string name="cancel">Отмена</string>
     <string name="canceled">Отменено</string>
     <string name="file_not_found">Файл не найден!</string>
     <string name="error">Ошибка!</string>
-    <string name="can_not_write_file_to_storage">Невозможно записать файл в хранилище!</string>    
-    
+    <string name="can_not_write_file_to_storage">Невозможно записать файл в хранилище!</string>
     <string name="up">Вверх</string>
     <string name="choose_book">Выберите книгу</string>
-    
     <string name="searching_books">Поиск книг</string>
-    
     <string name="uploading">Загрузка </string>
-    <string name="uploading_successful">Загрузка прошла успешно!</string>    
-    
+    <string name="uploading_successful">Загрузка прошла успешно!</string>
+
 </resources>
