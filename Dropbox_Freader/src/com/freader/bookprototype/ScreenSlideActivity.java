@@ -12,6 +12,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
+import android.view.View.MeasureSpec;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -67,6 +68,12 @@ public class ScreenSlideActivity extends FragmentActivity {
         seekBar = (SeekBar)findViewById(R.id.seekBarProgress);
         progressTextView = (TextView)findViewById(R.id.textViewProgress);
         authorAndTitleTextView = (TextView)findViewById(R.id.textViewAuthorAndTitle);
+        
+        seekBar.measure(MeasureSpec.UNSPECIFIED,MeasureSpec.UNSPECIFIED);
+        Log.w("freaderseekbar"," " + seekBar.getMeasuredHeight());
+        progressTextView.measure(MeasureSpec.UNSPECIFIED,MeasureSpec.UNSPECIFIED);
+        Log.w("freaderprogress"," " + progressTextView.getHeight());
+        
         authorAndTitleTextView.setText(author + " " + "\"" + title + "\"");
         try {
         	int paragraphNumber = (int)PositionDao.getPosition(AuthorizationActivity.datastore,dbPath);

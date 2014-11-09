@@ -10,7 +10,7 @@ import android.util.Log;
 import android.os.Process;
 
 
-@SuppressLint("UseSparseArrays")
+@SuppressLint({ "UseSparseArrays", "NewApi" })
 public class BookFetchRunnable extends HandlerThread {
 
 	
@@ -25,11 +25,12 @@ public class BookFetchRunnable extends HandlerThread {
 
 	@Override
 	public void run() {
+		
+		
 		PageSplitter pageSplitter = new PageSplitter(
 				parsedBook.textView.getWidth(),
-				(int) (parsedBook.textView.getHeight() * 0.80),
-				parsedBook.textView.getLineSpacingMultiplier(),
-				(int) parsedBook.textView.getLineSpacingExtra());
+				(int) (parsedBook.textView.getHeight()*0.8), 1.2f, 0);
+		Log.w("freader", String.valueOf(parsedBook.textView.getHeight()));
 		HashMap<Integer, Integer> paragraphsToPages = new HashMap<Integer, Integer>();
 		TextPaint textPaint = parsedBook.textView.getPaint();
 		for (int i = 0; i < parsedBook.paragraphs.size(); i++) {

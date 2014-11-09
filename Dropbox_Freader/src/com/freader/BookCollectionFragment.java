@@ -195,7 +195,7 @@ public class BookCollectionFragment extends Fragment {
 			.append(ebook.authors.get(0).middleName)
 			.append(" ").
 			append(ebook.authors.get(0).lastName);
-		a_activity.startPageActivity(dbPath, dbPath, name.toString(), ebook.title,
+		a_activity.startPageActivity(dbPath, dbPath, ebook.title, name.toString(),
 				ebook.parsedBook);
 	}
 

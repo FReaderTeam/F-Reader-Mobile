@@ -39,8 +39,6 @@ public class PageSplitter {
         appendNewLine();
         appendWord("\t", textPaint);
         appendText(text, textPaint);
-            
-       
     }
     
 
