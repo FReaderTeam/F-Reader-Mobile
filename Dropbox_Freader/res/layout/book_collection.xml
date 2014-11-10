@@ -1,13 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SwipeRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/refresh_book_collection"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.shppandroid1.app.MainActivity">
-    <ListView android:id="@+id/book_list"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
-    </ListView>
-</android.support.v4.widget.SwipeRefreshLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/last_opened_book"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/last_opened_book" />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+    	xmlns:android="http://schemas.android.com/apk/res/android"
+    	xmlns:tools="http://schemas.android.com/tools"
+    	android:id="@+id/refresh_book_collection"
+    	android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+    	tools:context="com.shppandroid1.app.MainActivity">
+    	
+    	<ListView android:id="@+id/book_list"
+        	android:layout_width="fill_parent"
+        	android:layout_height="fill_parent">
+    	</ListView>
+	</android.support.v4.widget.SwipeRefreshLayout>
+    
+</LinearLayout>

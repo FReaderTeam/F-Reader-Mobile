@@ -47,10 +47,7 @@ public class AuthorizationActivity extends Activity {
 		// Basic Android widgets
 		setClearListView();
 		createFolder();
-		mDbxAccountManager = DbxAccountManager.getInstance(
-				getApplicationContext(), APP_KEY, APP_SECRET);
-		if (!mDbxAccountManager.hasLinkedAccount())
-			mDbxAccountManager.startLink((Activity) this, REQUEST_LINK_TO_DBX);
+		getAuthentication();
 	}
 
 	@Override
@@ -72,8 +69,7 @@ public class AuthorizationActivity extends Activity {
 				// Start the remote authentication
 				setClearListView();
 				createFolder();
-				mDbxAccountManager = DbxAccountManager.getInstance(
-						getApplicationContext(), APP_KEY, APP_SECRET);
+				getAuthentication();
 			}
 			return true;
 		case R.id.mUpload:
@@ -116,6 +112,13 @@ public class AuthorizationActivity extends Activity {
 		}
 	}
 
+	private void getAuthentication(){
+		mDbxAccountManager = DbxAccountManager.getInstance(
+				getApplicationContext(), APP_KEY, APP_SECRET);
+		if (!mDbxAccountManager.hasLinkedAccount())
+			mDbxAccountManager.startLink((Activity) this, REQUEST_LINK_TO_DBX);
+	}
+	
 	private void createFolder() {
 		// Create folder Books in main app folder Freader to store books
 		File folder = new File(Environment.getExternalStorageDirectory()

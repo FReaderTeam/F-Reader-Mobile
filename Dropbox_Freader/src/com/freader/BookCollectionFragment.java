@@ -8,8 +8,11 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,10 +21,13 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
@@ -47,6 +53,11 @@ public class BookCollectionFragment extends Fragment {
 	private List<DbxFileInfo> mBooks;
 	private String mAppPath;
 	private AuthorizationActivity a_activity;
+	private Button mLastOpenedBook;
+	
+	private SharedPreferences sp;
+	private static final String LAST_OPENED_BOOK = "lastOpenedBook";
+	private int lastOpenedBookPosition;
 
 	public BookCollectionFragment() {
 	}
@@ -63,9 +74,13 @@ public class BookCollectionFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View view = inflater
 				.inflate(R.layout.book_collection, container, false);
+		
+		sp = getActivity().getSharedPreferences(LAST_OPENED_BOOK, 
+                Context.MODE_PRIVATE);
+		
 		SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(
 				 R.id.refresh_book_collection);
-		mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.BLACK, Color.BLACK, Color.BLACK);
+		//mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.BLACK, Color.BLACK, Color.BLACK);
 	    mSwipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
 	    	
 			@Override
@@ -75,17 +90,31 @@ public class BookCollectionFragment extends Fragment {
 			}
 		});
 	    
+	    mLastOpenedBook = (Button) view.findViewById(R.id.last_opened_book);
+	    mLastOpenedBook.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if(sp.contains(LAST_OPENED_BOOK)) {
+					lastOpenedBookPosition = sp.getInt(LAST_OPENED_BOOK, 0);
+			    }
+				openBook(lastOpenedBookPosition);
+				return false;
+			}
+		});
+	    
 		mBookListView = (ListView) view.findViewById(R.id.book_list);
-		
 		mBookListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> a, View v, int position,
 					long id) {
-				mBooks.get(position).path.getName();
-				new DownloadAndParseBookTask(getActivity(), mBooks.get(position).path
-						.getName(), mBooks.get(position).path, mAppPath,
-						BookCollectionFragment.this).execute();
+				
+				Editor editor = sp.edit();
+				editor.putInt(LAST_OPENED_BOOK, position);
+				editor.apply();
+				
+				openBook(position);
 			}
 		});
 
@@ -116,6 +145,13 @@ public class BookCollectionFragment extends Fragment {
 			}
 		});
 		return view;
+	}
+	
+	private void openBook(int position){
+		mBooks.get(position).path.getName();
+		new DownloadAndParseBookTask(getActivity(), mBooks.get(position).path
+				.getName(), mBooks.get(position).path, mAppPath,
+				BookCollectionFragment.this).execute();
 	}
 
 	private void updateBook(){

@@ -4,10 +4,11 @@
     <string name="upload_book">Upload book</string>
     <string name="unlink_from_dropbox">Unlink from dropbox</string>
     <string name="link_from_dropbox">Link from Dropbox</string>
+    <string name="select_font_size">Select font size</string>
     <string name="list_of_books">My books:</string>
     <string name="refresh_library">Refresh library</string>
     <string name="save">Save</string>
-    <string name="select_font_size">Select font size</string>
+    <string name="last_opened_book">Last opened book</string>
     
     <string name="problem_with_authorization">Problem with authorization!</string>
     <string name="problem_with_opening_datastore">Problem with opening datastore!</string>

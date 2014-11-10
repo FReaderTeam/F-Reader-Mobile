@@ -6,6 +6,7 @@
     <string name="unlink_from_dropbox">Вийти з Dropbox</string>
     <string name="link_from_dropbox">Увійти в Dropbox</string>
     <string name="list_of_books">Мої книги:</string>
+    <string name="last_opened_book">Остання відкрита книга</string>
     <string name="refresh_library">Оновити бібліотеку</string>
     <string name="save">Зберегти</string>
     <string name="select_font_size">Вибрати шрифт</string>
