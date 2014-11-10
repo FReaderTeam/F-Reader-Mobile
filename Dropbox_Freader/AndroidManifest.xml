@@ -15,7 +15,8 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/icon"
-        android:label="@string/app_name" >
+        android:label="@string/app_name"
+        android:name="com.freader.di.FReaderApplication">
         <activity
             android:name="com.freader.AuthorizationActivity"
             android:configChanges="orientation|keyboard"

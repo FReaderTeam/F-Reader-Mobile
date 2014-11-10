@@ -2,6 +2,9 @@ package com.freader;
 
 import java.io.File;
 import java.util.ArrayList;
+
+import javax.inject.Inject;
+
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -19,18 +22,22 @@ import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxException.Unauthorized;
 import com.freader.bookmodel.PagesHolder;
 import com.freader.bookprototype.ScreenSlideWaiting;
+import com.freader.di.InjectingActivity;
+
 import static com.freader.dao.DropboxSettings.*;
 
-public class AuthorizationActivity extends Activity {
+public class AuthorizationActivity extends InjectingActivity {
 
 	private static final String TITLE = "title";
 	private static final String NAME = "name";
 	private static final String PATH = "path";
-	private static final String DB_PATH = "dbPath";	
+	private static final String DB_PATH = "dbPath";
 
 	// Dropbox
 	public static DbxDatastoreManager dbxDatastoreManager;
-	private DbxAccountManager mDbxAccountManager;
+	
+	@Inject
+	DbxAccountManager mDbxAccountManager;
 
 	// Model
 	public static ArrayList<String> arr;
@@ -47,8 +54,8 @@ public class AuthorizationActivity extends Activity {
 		// Basic Android widgets
 		setClearListView();
 		createFolder();
-		mDbxAccountManager = DbxAccountManager.getInstance(
-				getApplicationContext(), APP_KEY, APP_SECRET);
+		// mDbxAccountManager = DbxAccountManager.getInstance(
+		// getApplicationContext(), APP_KEY, APP_SECRET);
 		if (!mDbxAccountManager.hasLinkedAccount())
 			mDbxAccountManager.startLink((Activity) this, REQUEST_LINK_TO_DBX);
 	}
