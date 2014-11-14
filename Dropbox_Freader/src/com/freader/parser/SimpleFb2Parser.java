@@ -1,19 +1,8 @@
 package com.freader.parser;
 
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.CharacterCodingException;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import android.util.Log;
 
 public class SimpleFb2Parser {
 

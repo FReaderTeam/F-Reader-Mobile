@@ -3,15 +3,11 @@ package com.freader.bookprototype;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.freader.R;
-import com.freader.bookmodel.ParsedBook;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.os.HandlerThread;
 import android.os.Process;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -19,7 +15,11 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.TextView;
-import com.freader.bookmodel.*;
+
+import com.freader.R;
+import com.freader.bookmodel.BookFetchRunnable;
+import com.freader.bookmodel.PagesHolder;
+import com.freader.bookmodel.ParsedBook;
 
 public class ScreenSlideWaiting extends FragmentActivity{
 

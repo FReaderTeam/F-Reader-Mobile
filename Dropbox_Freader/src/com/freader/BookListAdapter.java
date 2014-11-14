@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import com.dropbox.sync.android.DbxFileInfo;
+import com.freader.utils.FileSystemUtils;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -17,12 +18,9 @@ public class BookListAdapter extends BaseAdapter {
 
 	private static List<DbxFileInfo> mBooks;
 	private LayoutInflater mLayoutInflater;
-	private String mAppPath;
 
-	public BookListAdapter(Context context, List<DbxFileInfo> books,
-			String appPath) {
+	public BookListAdapter(Context context, List<DbxFileInfo> books) {
 		mBooks = books;
-		mAppPath = appPath;
 		mLayoutInflater = LayoutInflater.from(context);
 	}
 
@@ -58,7 +56,8 @@ public class BookListAdapter extends BaseAdapter {
 			holder = (ViewHolder) convertView.getTag();
 		}
 		holder.txt_bookName.setText(mBooks.get(position).path.getName());
-		File f = new File(mAppPath + "/" + mBooks.get(position).path.getName());
+		File f = new File(FileSystemUtils.BOOKS_FOLDER + "/"
+				+ mBooks.get(position).path.getName());
 		if (f.exists())
 			holder.itemImage.setImageResource(R.drawable.phone);
 		else

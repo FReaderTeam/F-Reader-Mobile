@@ -6,11 +6,9 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
@@ -196,8 +194,7 @@ public class BookCollectionFragment extends Fragment {
 				return another.modifiedTime.compareTo(one.modifiedTime);
 			}
 		});
-		BookListAdapter adapter = new BookListAdapter(getActivity(), mBooks,
-				FileSystemUtils.BOOKS_FOLDER);
+		BookListAdapter adapter = new BookListAdapter(getActivity(), mBooks);
 		mBookListView.setAdapter(adapter);
 	}
 

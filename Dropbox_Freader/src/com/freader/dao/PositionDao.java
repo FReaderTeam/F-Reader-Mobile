@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import com.dropbox.sync.android.DbxDatastore;
-import com.dropbox.sync.android.DbxDatastoreManager;
 import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxFields;
 import com.dropbox.sync.android.DbxRecord;
