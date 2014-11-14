@@ -5,118 +5,121 @@ import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextPaint;
 import android.text.style.StyleSpan;
-import java.util.ArrayList;
+
 import java.util.List;
 
+import java.util.ArrayList;
+
 public class PageSplitter {
-    private final int pageWidth;
-    private final int pageHeight;
-    private final float lineSpacingMultiplier;
-    private final int lineSpacingExtra;
-    private final List<CharSequence> pages = new ArrayList<CharSequence>();
-    private SpannableStringBuilder currentLine = new SpannableStringBuilder();
-    private SpannableStringBuilder currentPage = new SpannableStringBuilder();
-    private int currentLineHeight;
-    private int pageContentHeight;
-    private int currentLineWidth;
-    private int textLineHeight;
+	private final int pageWidth;
+	private final int pageHeight;
+	private final float lineSpacingMultiplier;
+	private final int lineSpacingExtra;
+	private final List<CharSequence> pages = new ArrayList<CharSequence>();
+	private SpannableStringBuilder currentLine = new SpannableStringBuilder();
+	private SpannableStringBuilder currentPage = new SpannableStringBuilder();
+	private int currentLineHeight;
+	private int pageContentHeight;
+	private int currentLineWidth;
+	private int textLineHeight;
 
-    
-    public PageSplitter(int pageWidth, int pageHeight, float lineSpacingMultiplier, int lineSpacingExtra) {
-        this.pageWidth = pageWidth;
-        this.pageHeight = pageHeight;
-        this.lineSpacingMultiplier = lineSpacingMultiplier;
-        this.lineSpacingExtra = lineSpacingExtra;
-    }
+	public PageSplitter(int pageWidth, int pageHeight,
+			float lineSpacingMultiplier, int lineSpacingExtra) {
+		this.pageWidth = pageWidth;
+		this.pageHeight = pageHeight;
+		this.lineSpacingMultiplier = lineSpacingMultiplier;
+		this.lineSpacingExtra = lineSpacingExtra;
+	}
 
-    public int getPageNumber(){
-    	return pages.size();
-    }
-    
-    
-    public void appendParagraph(String text, TextPaint textPaint){
-    	textLineHeight = (int) Math.ceil(textPaint.getFontMetrics(null) * lineSpacingMultiplier + lineSpacingExtra);
-        appendNewLine();
-        appendWord("\t", textPaint);
-        appendText(text, textPaint);
-    }
-    
+	public int getPageNumber() {
+		return pages.size();
+	}
 
-    private void appendText(String text, TextPaint textPaint) {
-        String[] words = text.split(" ", -1);
-        int i;
-        for (i = 0; i < words.length - 1; i++) {
-        	if (words[i].equals("%title"))
-        		appendWord("\t", textPaint);
-        	else if (words[i].equals("%new-section"))
-        		endPage();
-        	else
-        		appendWord(words[i] + " ", textPaint);
-        }
-        appendWord(words[i], textPaint);
-    }
+	public void appendParagraph(String text, TextPaint textPaint) {
+		textLineHeight = (int) Math.ceil(textPaint.getFontMetrics(null)
+				* lineSpacingMultiplier + lineSpacingExtra);
+		appendNewLine();
+		appendWord("\t", textPaint);
+		appendText(text, textPaint);
+	}
 
-    private void appendNewLine() {
-        currentLine.append("\n");
-        checkForPageEnd();
-        appendLineToPage(textLineHeight);
-    }
+	private void appendText(String text, TextPaint textPaint) {
+		String[] words = text.split(" ", -1);
+		int i;
+		for (i = 0; i < words.length - 1; i++) {
+			if (words[i].equals("%title"))
+				appendWord("\t", textPaint);
+			else if (words[i].equals("%new-section"))
+				endPage();
+			else
+				appendWord(words[i] + " ", textPaint);
+		}
+		appendWord(words[i], textPaint);
+	}
 
-    private void endPage(){
-    	pages.add(currentPage);
-        currentPage = new SpannableStringBuilder();
-        pageContentHeight = 0;
-    }
-    
-    private void checkForPageEnd() {
-        if (pageContentHeight + currentLineHeight > pageHeight) {
-            endPage();
-        }
-    }
+	private void appendNewLine() {
+		currentLine.append("\n");
+		checkForPageEnd();
+		appendLineToPage(textLineHeight);
+	}
 
-    private void appendWord(String appendedText, TextPaint textPaint) {
-        int textWidth = (int) Math.ceil(textPaint.measureText(appendedText));
-        if (currentLineWidth + textWidth >= pageWidth) {
-            checkForPageEnd();
-            appendLineToPage(textLineHeight);
-        }
-        appendTextToLine(appendedText, textPaint, textWidth);
-    }
+	private void endPage() {
+		pages.add(currentPage);
+		currentPage = new SpannableStringBuilder();
+		pageContentHeight = 0;
+	}
 
-    private void appendLineToPage(int textLineHeight) {
-        currentPage.append(currentLine);
-        pageContentHeight += currentLineHeight;
+	private void checkForPageEnd() {
+		if (pageContentHeight + currentLineHeight > pageHeight) {
+			endPage();
+		}
+	}
 
-        currentLine = new SpannableStringBuilder();
-        currentLineHeight = textLineHeight;
-        currentLineWidth = 0;
-    }
+	private void appendWord(String appendedText, TextPaint textPaint) {
+		int textWidth = (int) Math.ceil(textPaint.measureText(appendedText));
+		if (currentLineWidth + textWidth >= pageWidth) {
+			checkForPageEnd();
+			appendLineToPage(textLineHeight);
+		}
+		appendTextToLine(appendedText, textPaint, textWidth);
+	}
 
-    private void appendTextToLine(String appendedText, TextPaint textPaint, int textWidth) {
-        currentLineHeight = Math.max(currentLineHeight, textLineHeight);
-        currentLine.append(renderToSpannable(appendedText, textPaint));
-        currentLineWidth += textWidth;
-    }
+	private void appendLineToPage(int textLineHeight) {
+		currentPage.append(currentLine);
+		pageContentHeight += currentLineHeight;
 
-    public List<CharSequence> getPages() {
-        List<CharSequence> copyPages = new ArrayList<CharSequence>(pages);
-        SpannableStringBuilder lastPage = new SpannableStringBuilder(currentPage);
-        if (pageContentHeight + currentLineHeight > pageHeight) {
-            copyPages.add(lastPage);
-            lastPage = new SpannableStringBuilder();
-        }
-        lastPage.append(currentLine);
-        copyPages.add(lastPage);
-        return copyPages;
-    }
+		currentLine = new SpannableStringBuilder();
+		currentLineHeight = textLineHeight;
+		currentLineWidth = 0;
+	}
 
-    
-    private SpannableString renderToSpannable(String text, TextPaint textPaint) {
-        SpannableString spannable = new SpannableString(text);
+	private void appendTextToLine(String appendedText, TextPaint textPaint,
+			int textWidth) {
+		currentLineHeight = Math.max(currentLineHeight, textLineHeight);
+		currentLine.append(renderToSpannable(appendedText, textPaint));
+		currentLineWidth += textWidth;
+	}
 
-        if (textPaint.isFakeBoldText()) {
-            spannable.setSpan(new StyleSpan(Typeface.BOLD), 0, spannable.length(), 0);
-        }
-        return spannable;
-    }
+	public List<CharSequence> getPages() {
+		List<CharSequence> copyPages = new ArrayList<CharSequence>(pages);
+		SpannableStringBuilder lastPage = new SpannableStringBuilder(
+				currentPage);
+		if (pageContentHeight + currentLineHeight > pageHeight) {
+			copyPages.add(lastPage);
+			lastPage = new SpannableStringBuilder();
+		}
+		lastPage.append(currentLine);
+		copyPages.add(lastPage);
+		return copyPages;
+	}
+
+	private SpannableString renderToSpannable(String text, TextPaint textPaint) {
+		SpannableString spannable = new SpannableString(text);
+
+		if (textPaint.isFakeBoldText()) {
+			spannable.setSpan(new StyleSpan(Typeface.BOLD), 0,
+					spannable.length(), 0);
+		}
+		return spannable;
+	}
 }

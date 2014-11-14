@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 import org.apache.commons.io.IOUtils;
 
@@ -25,16 +24,16 @@ import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.freader.parser.EBook;
 import com.freader.parser.SimpleFb2Parser;
+import com.freader.utils.FileSystemUtils;
+import com.freader.utils.ToastUtils;
 
 public class DownloadAndParseBookTask extends AsyncTask<Void, Long, Boolean> {
 
 	private Context mContext;
 	private final ProgressDialog mDialog;
-	private boolean mCanceled;
 	private String mErrorMsg;
 	private String mBookName;
 	private DbxPath mBookPath;
-	private String appFolderPath;
 	private BookCollectionFragment fragment;
 	private Boolean needToDownload;
 	private File file;
@@ -42,29 +41,28 @@ public class DownloadAndParseBookTask extends AsyncTask<Void, Long, Boolean> {
 	DbxAccountManager mDbxAcctMgr;
 
 	public DownloadAndParseBookTask(Context context, String bookName,
-			DbxPath bookPath, String appPath, BookCollectionFragment f) {
+			DbxPath bookPath, BookCollectionFragment f) {
 		mContext = context.getApplicationContext();
 		mBookName = bookName;
 		mBookPath = bookPath;
 		mDbxAcctMgr = f.getAccountManager();
-		appFolderPath = appPath;
 		fragment = f;
 		needToDownload = true;
 		mDialog = new ProgressDialog(context);
-		file = new File(appFolderPath + "/" + mBookName);
+		file = new File(FileSystemUtils.BOOKS_FOLDER + "/" + mBookName);
 		if (file.exists() && file.length() > 0)
 			needToDownload = false;
 		else {
 			mDialog.setMessage(mContext.getString(R.string.downloading));
-			mDialog.setButton(mContext.getString(R.string.cancel), new OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					mCanceled = true;
-					mErrorMsg = mContext.getString(R.string.canceled);
-					// delete book from storage
-					File file = new File(appFolderPath + "/" + mBookName);
-					file.delete();					
-				}
-			});
+			mDialog.setButton(0, mContext.getString(R.string.cancel),
+					new OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							mErrorMsg = mContext.getString(R.string.canceled);
+							String path = FileSystemUtils.BOOKS_FOLDER + "/"
+									+ mBookName;
+							FileSystemUtils.deleteFile(path);
+						}
+					});
 			mDialog.show();
 		}
 	}
@@ -88,8 +86,8 @@ public class DownloadAndParseBookTask extends AsyncTask<Void, Long, Boolean> {
 			} else {
 				content = IOUtils.toByteArray(new FileInputStream(file));
 			}
-			String encoding = getEncoding(content);
-			String bookContent = new String(content,encoding);
+			String encoding = FileSystemUtils.getXMLFileEncoding(content);
+			String bookContent = new String(content, encoding);
 			eBook = SimpleFb2Parser.parse(bookContent);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -102,7 +100,8 @@ public class DownloadAndParseBookTask extends AsyncTask<Void, Long, Boolean> {
 			mErrorMsg = mContext.getString(R.string.error);
 			return false;
 		} catch (IOException e) {
-			mErrorMsg = mContext.getString(R.string.can_not_write_file_to_storage);
+			mErrorMsg = mContext
+					.getString(R.string.can_not_write_file_to_storage);
 			return false;
 		} finally {
 			if (needToDownload)
@@ -116,36 +115,16 @@ public class DownloadAndParseBookTask extends AsyncTask<Void, Long, Boolean> {
 		mDialog.dismiss();
 		if (!result) {
 			// Couldn't download it, so show an error
-			showToast(mErrorMsg);
+			ToastUtils.showLongToast(mContext, mErrorMsg);
 		} else {
-			if (needToDownload){
-				//showToast(R.string.successful + mBookPath.toString());
-				Toast error = Toast.makeText(mContext, 
-						R.string.successful + mBookPath.toString(), 
-						Toast.LENGTH_LONG);
+			if (needToDownload) {
+				// showToast(R.string.successful + mBookPath.toString());
+				Toast error = Toast.makeText(mContext, R.string.successful
+						+ mBookPath.toString(), Toast.LENGTH_LONG);
 				error.show();
 			}
 			fragment.callbackDBTask(eBook, mBookPath.toString());
 		}
 	}
 
-	private String getEncoding(byte[] xmlBytes)
-			throws UnsupportedEncodingException {
-		byte[] headerBytes = new byte[1024];
-		System.arraycopy(xmlBytes, 0, headerBytes, 0, 1024);
-		String header = new String(headerBytes, "ASCII");
-		int endOfHeader = header.indexOf("?>");
-		endOfHeader += 2;
-		header = header.substring(0,endOfHeader);
-		int encodingIndex = header.indexOf("encoding=\"");
-		int encodingStart = encodingIndex + 10;
-		int encodingEnd = header.indexOf("\"?>");
-		String encoding = header.substring(encodingStart, encodingEnd);
-		return encoding;
-	}
-
-	private void showToast(String msg) {
-		Toast error = Toast.makeText(mContext, msg, Toast.LENGTH_LONG);
-		error.show();
-	}
 }

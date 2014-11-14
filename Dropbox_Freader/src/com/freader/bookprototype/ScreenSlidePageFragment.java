@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -13,34 +12,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Paint;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.ScaleGestureDetector;
-import android.view.ScaleGestureDetector.SimpleOnScaleGestureListener;
 import android.view.View;
-import android.view.View.MeasureSpec;
 import android.view.View.OnLongClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.freader.*;
-import com.freader.bookmodel.PagesHolder;
-import com.freader.bookmodel.ParsedBook;
-
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.MotionEvent;
+import com.freader.R;
 
 public class ScreenSlidePageFragment extends Fragment {
 

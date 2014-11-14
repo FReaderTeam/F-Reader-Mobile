@@ -1,17 +1,22 @@
 package com.freader;
 
-import java.io.File;
+import static com.freader.utils.DropboxSettings.APP_KEY;
+import static com.freader.utils.DropboxSettings.APP_SECRET;
+import static com.freader.utils.DropboxSettings.PICKFILE_CANCEL_CODE;
+import static com.freader.utils.DropboxSettings.PICKFILE_REQUEST_CODE;
+import static com.freader.utils.DropboxSettings.REQUEST_LINK_TO_DBX;
+
 import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import com.dropbox.sync.android.DbxAccountManager;
 import com.dropbox.sync.android.DbxDatastore;
 import com.dropbox.sync.android.DbxDatastoreManager;
@@ -19,14 +24,15 @@ import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxException.Unauthorized;
 import com.freader.bookmodel.PagesHolder;
 import com.freader.bookprototype.ScreenSlideWaiting;
-import static com.freader.dao.DropboxSettings.*;
+import com.freader.utils.FileSystemUtils;
+import com.freader.utils.ToastUtils;
 
 public class AuthorizationActivity extends Activity {
 
 	private static final String TITLE = "title";
 	private static final String NAME = "name";
 	private static final String PATH = "path";
-	private static final String DB_PATH = "dbPath";	
+	private static final String DB_PATH = "dbPath";
 
 	// Dropbox
 	public static DbxDatastoreManager dbxDatastoreManager;
@@ -44,10 +50,9 @@ public class AuthorizationActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// Basic Android widgets
 		setClearListView();
-		createFolder();
-		getAuthentication();
+		FileSystemUtils.createBooksFolder();
+		logIn();
 	}
 
 	@Override
@@ -61,80 +66,80 @@ public class AuthorizationActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
+		int selectedItemId = item.getItemId();
+		switch (selectedItemId) {
 		case R.id.mSubmit:
-			if (mLoggedIn) {
-				logOut();
-			} else {
-				// Start the remote authentication
-				setClearListView();
-				createFolder();
-				getAuthentication();
-			}
+			onSubmit();
 			return true;
 		case R.id.mUpload:
-			Intent pickerIntent = new Intent(AuthorizationActivity.this,
-					BookPickerActivity.class);
-			startActivityForResult(pickerIntent, PICKFILE_REQUEST_CODE);
+			onUpload();
 			return true;
 		case R.id.refreshLibrary:
-			setClearListView();
-			listOfBooks.setText(R.string.list_of_books);
-			FragmentTransaction transaction = getFragmentManager()
-					.beginTransaction();
-			transaction.add(
-					R.id.books_fragment,
-					new BookCollectionFragment(mDbxAccountManager, Environment
-							.getExternalStorageDirectory() + "/FReader/Books",
-							this));
-			transaction.commit();
+			onRefreshLibrabry();
 			return true;
-		default:
-			return super.onOptionsItemSelected(item);
 		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case PICKFILE_REQUEST_CODE:
-			if (resultCode != PICKFILE_CANCEL_CODE) {
-				String mFilePath = data.getStringExtra("filePickerPath");
-				Log.e(mFilePath, "was choosen");
-				String[] s = mFilePath.split("/");
-				new UploadBookTask(AuthorizationActivity.this, s[s.length - 1],
-						mFilePath, mDbxAccountManager).execute();
-			}
+			onFilePicked(data, resultCode);
 			break;
 		case REQUEST_LINK_TO_DBX:
-			mLoggedIn = true;
-			setLoggedIn(mLoggedIn);
+			setLoggedIn(true);
 		}
 	}
 
-	private void getAuthentication(){
-		mDbxAccountManager = DbxAccountManager.getInstance(
-				getApplicationContext(), APP_KEY, APP_SECRET);
-		if (!mDbxAccountManager.hasLinkedAccount())
-			mDbxAccountManager.startLink((Activity) this, REQUEST_LINK_TO_DBX);
+	private void onFilePicked(Intent data, int resultCode) {
+		if (resultCode != PICKFILE_CANCEL_CODE) {
+			String mFilePath = data.getStringExtra("filePickerPath");
+			Log.e(mFilePath, "was choosen");
+			String[] s = mFilePath.split("/");
+			new UploadBookTask(AuthorizationActivity.this, s[s.length - 1],
+					mFilePath, mDbxAccountManager).execute();
+		}
 	}
-	
-	private void createFolder() {
-		// Create folder Books in main app folder Freader to store books
-		File folder = new File(Environment.getExternalStorageDirectory()
-				+ "/FReader");
-		if (!folder.exists())
-			folder.mkdir();
-		folder = new File(Environment.getExternalStorageDirectory()
-				+ "/FReader/Books");
-		if (!folder.exists())
-			folder.mkdir();
+
+	private void onSubmit() {
+		if (mLoggedIn) {
+			logOut();
+		} else {
+			// Start the remote authentication
+			setClearListView();
+			FileSystemUtils.createBooksFolder();
+			logIn();
+		}
+	}
+
+	private void onUpload() {
+		Intent pickerIntent = new Intent(AuthorizationActivity.this,
+				BookPickerActivity.class);
+		startActivityForResult(pickerIntent, PICKFILE_REQUEST_CODE);
+	}
+
+	private void onRefreshLibrabry() {
+		setClearListView();
+		listOfBooks.setText(R.string.list_of_books);
+		FragmentTransaction transaction = getFragmentManager()
+				.beginTransaction();
+		transaction.add(R.id.books_fragment, new BookCollectionFragment(
+				mDbxAccountManager, this));
+		transaction.commit();
 	}
 
 	private void logOut() {
 		mDbxAccountManager.unlink();
 		setLoggedIn(false);
 		setClearListView();
+	}
+
+	private void logIn() {
+		mDbxAccountManager = DbxAccountManager.getInstance(
+				getApplicationContext(), APP_KEY, APP_SECRET);
+		if (!mDbxAccountManager.hasLinkedAccount())
+			mDbxAccountManager.startLink((Activity) this, REQUEST_LINK_TO_DBX);
 	}
 
 	private void setClearListView() {
@@ -144,37 +149,39 @@ public class AuthorizationActivity extends Activity {
 
 	private void setLoggedIn(boolean loggedIn) {
 		mLoggedIn = loggedIn;
-		if (loggedIn) {
-			try {
-				if (datastore == null) {
-					dbxDatastoreManager = DbxDatastoreManager
-							.forAccount(mDbxAccountManager.getLinkedAccount());
-					datastore = dbxDatastoreManager.openDefaultDatastore();
-				}
-			} catch (Unauthorized e) {
-				showToast(getString(R.string.problem_with_authorization));
-			} catch (DbxException e) {
-				showToast(getString(R.string.problem_with_opening_datastore));
-			}
+		if (mLoggedIn) {
+			setDatastoreForLinkedAccount();
 			menu.getItem(0).setTitle(R.string.unlink_from_dropbox);
 			listOfBooks.setText(R.string.list_of_books);
-			FragmentTransaction transaction = getFragmentManager()
-					.beginTransaction();
-			transaction.add(
-					R.id.books_fragment,
-					new BookCollectionFragment(mDbxAccountManager, Environment
-							.getExternalStorageDirectory() + "/FReader/Books",
-							this));
-			transaction.commit();
+			showBookCollectionFragment();
 		} else {
 			menu.getItem(0).setTitle(R.string.link_from_dropbox);
 			listOfBooks.setText(" ");
 		}
 	}
 
-	private void showToast(String msg) {
-		Toast error = Toast.makeText(this, msg, Toast.LENGTH_LONG);
-		error.show();
+	private void showBookCollectionFragment() {
+		FragmentTransaction transaction = getFragmentManager()
+				.beginTransaction();
+		transaction.add(R.id.books_fragment, new BookCollectionFragment(
+				mDbxAccountManager, this));
+		transaction.commit();
+	}
+
+	private void setDatastoreForLinkedAccount() {
+		try {
+			if (datastore == null) {
+				dbxDatastoreManager = DbxDatastoreManager
+						.forAccount(mDbxAccountManager.getLinkedAccount());
+				datastore = dbxDatastoreManager.openDefaultDatastore();
+			}
+		} catch (Unauthorized e) {
+			ToastUtils.showLongToast(this,
+					getString(R.string.problem_with_authorization));
+		} catch (DbxException e) {
+			ToastUtils.showLongToast(this,
+					getString(R.string.problem_with_opening_datastore));
+		}
 	}
 
 	void startPageActivity(String path, String dbPath, String title,
@@ -187,4 +194,5 @@ public class AuthorizationActivity extends Activity {
 		intent.putExtra(DB_PATH, dbPath);
 		startActivity(intent);
 	}
+
 }

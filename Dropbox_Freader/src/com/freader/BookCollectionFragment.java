@@ -1,19 +1,16 @@
 package com.freader;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
@@ -26,10 +23,10 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 
 import com.dropbox.sync.android.DbxAccountManager;
@@ -37,8 +34,10 @@ import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxException.Unauthorized;
 import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxFileSystem;
-import com.freader.parser.*;
-
+import com.dropbox.sync.android.DbxPath;
+import com.freader.parser.EBook;
+import com.freader.utils.FileSystemUtils;
+import com.freader.utils.SharedPreferencesUtils;
 
 public class BookCollectionFragment extends Fragment {
 
@@ -51,22 +50,18 @@ public class BookCollectionFragment extends Fragment {
 	// Model
 	private ListView mBookListView;
 	private List<DbxFileInfo> mBooks;
-	private String mAppPath;
-	private AuthorizationActivity a_activity;
+	private AuthorizationActivity authActivity;
 	private Button mLastOpenedBook;
-	
-	private SharedPreferences sp;
-	private static final String LAST_OPENED_BOOK = "lastOpenedBook";
+	private SharedPreferences sharedPreferences;
 	private int lastOpenedBookPosition;
 
 	public BookCollectionFragment() {
 	}
 
-	public BookCollectionFragment(DbxAccountManager mDbxAcctMgr, String path,
+	public BookCollectionFragment(DbxAccountManager mDbxAcctMgr,
 			AuthorizationActivity a_activity) {
 		this.mDbxAcctMgr = mDbxAcctMgr;
-		this.mAppPath = path;
-		this.a_activity = a_activity;
+		this.authActivity = a_activity;
 	}
 
 	@Override
@@ -74,52 +69,43 @@ public class BookCollectionFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View view = inflater
 				.inflate(R.layout.book_collection, container, false);
-		
-		sp = getActivity().getSharedPreferences(LAST_OPENED_BOOK, 
-                Context.MODE_PRIVATE);
-		
-		SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(
-				 R.id.refresh_book_collection);
-		//mSwipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.BLACK, Color.BLACK, Color.BLACK);
-	    mSwipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
-	    	
+		sharedPreferences = SharedPreferencesUtils
+				.getSharedPreferences(getActivity());
+
+		SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) view
+				.findViewById(R.id.refresh_book_collection);
+		mSwipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
 			@Override
 			public void onRefresh() {
-				// TODO Auto-generated method stub
 				updateBook();
 			}
 		});
-	    
-	    mLastOpenedBook = (Button) view.findViewById(R.id.last_opened_book);
-	    mLastOpenedBook.setOnTouchListener(new OnTouchListener() {
-			
+
+		mLastOpenedBook = (Button) view.findViewById(R.id.last_opened_book);
+		mLastOpenedBook.setOnTouchListener(new OnTouchListener() {
+
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				if(sp.contains(LAST_OPENED_BOOK)) {
-					lastOpenedBookPosition = sp.getInt(LAST_OPENED_BOOK, 0);
-			    }
+				lastOpenedBookPosition = SharedPreferencesUtils
+						.getPosition(sharedPreferences);
 				openBook(lastOpenedBookPosition);
 				return false;
 			}
 		});
-	    
+
 		mBookListView = (ListView) view.findViewById(R.id.book_list);
 		mBookListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> a, View v, int position,
 					long id) {
-				
-				Editor editor = sp.edit();
-				editor.putInt(LAST_OPENED_BOOK, position);
-				editor.apply();
-				
+				SharedPreferencesUtils
+						.savePosition(sharedPreferences, position);
 				openBook(position);
 			}
 		});
 
 		mBookListView.setOnItemLongClickListener(new OnItemLongClickListener() {
-
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
@@ -146,26 +132,27 @@ public class BookCollectionFragment extends Fragment {
 		});
 		return view;
 	}
-	
-	private void openBook(int position){
+
+	private void openBook(int position) {
 		mBooks.get(position).path.getName();
-		new DownloadAndParseBookTask(getActivity(), mBooks.get(position).path
-				.getName(), mBooks.get(position).path, mAppPath,
-				BookCollectionFragment.this).execute();
+		String bookName = mBooks.get(position).path.getName();
+		DbxPath bookPath = mBooks.get(position).path;
+		new DownloadAndParseBookTask(getActivity(), bookName, bookPath, this)
+				.execute();
 	}
 
-	private void updateBook(){
+	private void updateBook() {
 		this.onResume();
 	}
-	
+
 	private void deleteBook() {
 		// deleting from DropBox
 		try {
 			DbxFileSystem sys = DbxFileSystem.forAccount(mDbxAcctMgr
 					.getLinkedAccount());
 			sys.delete(mBooks.get(listBookPosition).path);
-			Toast.makeText(getActivity(), R.string.successful, Toast.LENGTH_LONG)
-					.show();
+			Toast.makeText(getActivity(), R.string.successful,
+					Toast.LENGTH_LONG).show();
 			this.onResume();
 		} catch (Unauthorized e) {
 			e.printStackTrace();
@@ -173,10 +160,9 @@ public class BookCollectionFragment extends Fragment {
 			e.printStackTrace();
 		}
 		// delete from storage
-		File f = new File(mAppPath + "/"
-				+ mBooks.get(listBookPosition).path.getName());
-		if (f.exists())
-			f.delete();
+		String bookPath = FileSystemUtils.BOOKS_FOLDER + "/"
+				+ mBooks.get(listBookPosition).path.getName();
+		FileSystemUtils.deleteFile(bookPath);
 	}
 
 	@Override
@@ -203,39 +189,28 @@ public class BookCollectionFragment extends Fragment {
 	}
 
 	public void setBooks(List<DbxFileInfo> books) {
-		Collections.sort(books, new Comparator<DbxFileInfo>() {
+		this.mBooks = books;
+		Collections.sort(mBooks, new Comparator<DbxFileInfo>() {
 			@Override
-			public int compare(DbxFileInfo lhs, DbxFileInfo rhs) {
-				return rhs.modifiedTime.compareTo(lhs.modifiedTime);
+			public int compare(DbxFileInfo one, DbxFileInfo another) {
+				return another.modifiedTime.compareTo(one.modifiedTime);
 			}
 		});
-		this.mBooks = books;
-		String[] fileNames = new String[mBooks.size()];
-		for (int i = 0; i < mBooks.size(); i++) {
-			fileNames[i] = mBooks.get(i).path.getName();// TODO get pathes from
-														// somewhere
-			// else, like datastore
-		}
-		mBookListView.setAdapter(new BookListAdapter(getActivity(), mBooks, mAppPath));
+		BookListAdapter adapter = new BookListAdapter(getActivity(), mBooks,
+				FileSystemUtils.BOOKS_FOLDER);
+		mBookListView.setAdapter(adapter);
 	}
 
 	public void callbackDBTask(EBook ebook, String dbPath) {
 		StringBuilder name = new StringBuilder();
 		if (ebook.authors.get(0).middleName == null)
-			name.append(ebook.authors.get(0).firstName)
-			.append(" ")
-			.append(ebook.authors.get(0).lastName);
+			name.append(ebook.authors.get(0).firstName).append(" ")
+					.append(ebook.authors.get(0).lastName);
 		else
-			name.append(ebook.authors.get(0).firstName)
-			.append(" ")
-			.append(ebook.authors.get(0).middleName)
-			.append(" ").
-			append(ebook.authors.get(0).lastName);
-		a_activity.startPageActivity(dbPath, dbPath, ebook.title, name.toString(),
-				ebook.parsedBook);
-	}
-
-	public void onCancelled() {
-
+			name.append(ebook.authors.get(0).firstName).append(" ")
+					.append(ebook.authors.get(0).middleName).append(" ")
+					.append(ebook.authors.get(0).lastName);
+		authActivity.startPageActivity(dbPath, dbPath, ebook.title,
+				name.toString(), ebook.parsedBook);
 	}
 }
