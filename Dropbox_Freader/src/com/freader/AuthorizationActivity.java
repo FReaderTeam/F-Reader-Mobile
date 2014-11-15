@@ -7,8 +7,10 @@ import static com.freader.utils.DropboxUtils.REQUEST_LINK_TO_DBX;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -156,6 +158,14 @@ public class AuthorizationActivity extends Activity {
 		intent.putExtra(PATH, path);
 		intent.putExtra(DBX_PATH, dbPath);
 		startActivity(intent);
+	}
+	
+	@Override
+	public void onBackPressed(){
+		Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
 	}
 
 }

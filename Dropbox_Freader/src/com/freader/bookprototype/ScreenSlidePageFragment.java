@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -14,7 +13,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnLongClickListener;
@@ -39,15 +37,6 @@ public class ScreenSlidePageFragment extends Fragment {
 	private SharedPreferences sp;
 	private ScreenSlideActivity screenSlideActivity;
 	
-	private static float mScaleFactor = 25.0f;
-	StringBuilder sb = new StringBuilder();
-	int upPI = 0;
-	int downPI = 0;
-	boolean pinch = false;
-	String result = "";
-	private static double deltaPointerDown, deltaPointerMove;
-	private static float textSize;
-	
 	public ScreenSlidePageFragment(CharSequence text, 
 			ScreenSlideActivity screenSlideActivity) {
 		super();
@@ -55,7 +44,7 @@ public class ScreenSlidePageFragment extends Fragment {
 		this.screenSlideActivity = screenSlideActivity;
 	}
 
-	@SuppressLint("ClickableViewAccessibility")
+	@SuppressLint({ "ClickableViewAccessibility", "InflateParams" })
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -116,17 +105,6 @@ public class ScreenSlidePageFragment extends Fragment {
 				return false;
 			}
 		});
-
-		textSize = mainTextTextView.getTextSize();
 		return view;
-	}
-
-	public static float getFontSize(Activity activity) {
-		DisplayMetrics dMetrics = new DisplayMetrics();
-		activity.getWindowManager().getDefaultDisplay().getMetrics(dMetrics);
-		double curScale = (deltaPointerDown/deltaPointerMove);
-		final float WIDE = activity.getResources().getDisplayMetrics().widthPixels;
-		float valueWide = (float) (WIDE / curScale / (dMetrics.scaledDensity));
-		return valueWide;
 	}
 }

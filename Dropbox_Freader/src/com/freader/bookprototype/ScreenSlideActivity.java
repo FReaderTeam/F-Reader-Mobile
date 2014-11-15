@@ -50,6 +50,7 @@ public class ScreenSlideActivity extends FragmentActivity {
 
 	private ScreenSlideActivity screenSlideActivity;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

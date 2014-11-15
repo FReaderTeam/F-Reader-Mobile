@@ -36,11 +36,8 @@ public class ScreenSlideWaiting extends FragmentActivity{
     private String bookFullPath;
     public String dbPath;
     private CharSequence text;
-    private int size;
     
     private long starttime;
-    
-    private String fontSizeString;
     private SharedPreferences sp;
     private static final String FRAGMENT_FONT_SIZE = "fragmentFontSize";
     
@@ -80,10 +77,10 @@ public class ScreenSlideWaiting extends FragmentActivity{
         parsedBook.setActivity(this);
         ViewTreeObserver vto = textViewForGetSize.getViewTreeObserver(); 
         vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
-            @Override 
+            @SuppressWarnings("deprecation")
+			@Override 
             public void onGlobalLayout() { 
                 textViewForGetSize.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
-                starttime = System.nanoTime();
                 parsedBook.setTextView(textViewForGetSize);
                 BookFetchRunnable bfr = new BookFetchRunnable(parsedBook);
                 bfr.setPriority(Process.THREAD_PRIORITY_BACKGROUND + Process.THREAD_PRIORITY_MORE_FAVORABLE);
