@@ -56,12 +56,12 @@ public class BookListAdapter extends BaseAdapter {
 			holder = (ViewHolder) convertView.getTag();
 		}
 		holder.txt_bookName.setText(mBooks.get(position).path.getName());
-		File f = new File(FileSystemUtils.BOOKS_FOLDER + "/"
-				+ mBooks.get(position).path.getName());
-		if (f.exists())
-			holder.itemImage.setImageResource(R.drawable.phone);
-		else
-			holder.itemImage.setImageResource(R.drawable.dropbox_logo);
+		String bookPath = FileSystemUtils.BOOKS_FOLDER + "/"
+				+ mBooks.get(position).path.getName();
+		File f = new File(bookPath);
+		int resourceId = f.exists() ? R.drawable.phone
+				: R.drawable.dropbox_logo;
+		holder.itemImage.setImageResource(resourceId);
 		return convertView;
 	}
 

@@ -34,13 +34,12 @@ import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.freader.parser.EBook;
+import com.freader.utils.DropboxUtils;
 import com.freader.utils.FileSystemUtils;
 import com.freader.utils.SharedPreferencesUtils;
+import com.freader.utils.ToastUtils;
 
 public class BookCollectionFragment extends Fragment {
-
-	// Dropbox
-	DbxAccountManager mDbxAcctMgr;
 
 	AlertDialog.Builder confirmDialog;
 	private int listBookPosition;
@@ -56,10 +55,8 @@ public class BookCollectionFragment extends Fragment {
 	public BookCollectionFragment() {
 	}
 
-	public BookCollectionFragment(DbxAccountManager mDbxAcctMgr,
-			AuthorizationActivity a_activity) {
-		this.mDbxAcctMgr = mDbxAcctMgr;
-		this.authActivity = a_activity;
+	public BookCollectionFragment(AuthorizationActivity authActivity) {
+		this.authActivity = authActivity;
 	}
 
 	@Override
@@ -146,11 +143,9 @@ public class BookCollectionFragment extends Fragment {
 	private void deleteBook() {
 		// deleting from DropBox
 		try {
-			DbxFileSystem sys = DbxFileSystem.forAccount(mDbxAcctMgr
-					.getLinkedAccount());
+			DbxFileSystem sys = DropboxUtils.getFileSystem();
 			sys.delete(mBooks.get(listBookPosition).path);
-			Toast.makeText(getActivity(), R.string.successful,
-					Toast.LENGTH_LONG).show();
+			ToastUtils.showLongToast(getActivity(), R.string.successful);
 			this.onResume();
 		} catch (Unauthorized e) {
 			e.printStackTrace();
@@ -176,10 +171,6 @@ public class BookCollectionFragment extends Fragment {
 		return true;
 	}
 
-	protected DbxAccountManager getAccountManager() {
-		return this.mDbxAcctMgr;
-	}
-
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -199,15 +190,8 @@ public class BookCollectionFragment extends Fragment {
 	}
 
 	public void callbackDBTask(EBook ebook, String dbPath) {
-		StringBuilder name = new StringBuilder();
-		if (ebook.authors.get(0).middleName == null)
-			name.append(ebook.authors.get(0).firstName).append(" ")
-					.append(ebook.authors.get(0).lastName);
-		else
-			name.append(ebook.authors.get(0).firstName).append(" ")
-					.append(ebook.authors.get(0).middleName).append(" ")
-					.append(ebook.authors.get(0).lastName);
-		authActivity.startPageActivity(dbPath, dbPath, ebook.title,
-				name.toString(), ebook.parsedBook);
+		String authorName = ebook.getAuthorName();
+		authActivity.startPageActivity(dbPath, dbPath, ebook.title, authorName,
+				ebook.parsedBook);
 	}
 }

@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.TextView;
-import static com.freader.utils.DropboxSettings.*;
+import static com.freader.utils.DropboxUtils.*;
 
 public class BookPickerActivity extends Activity {
 

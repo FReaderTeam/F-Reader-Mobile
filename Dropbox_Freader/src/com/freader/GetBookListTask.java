@@ -12,6 +12,7 @@ import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxFileInfo;
 import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
+import com.freader.utils.DropboxUtils;
 import com.freader.utils.FileSystemUtils;
 
 public class GetBookListTask extends AsyncTask<Void, Long, Boolean> {
@@ -38,16 +39,11 @@ public class GetBookListTask extends AsyncTask<Void, Long, Boolean> {
 
 	@Override
 	protected Boolean doInBackground(Void... params) {
-		mDbxAcctMgr = booksFragment.getAccountManager();
-		if (mCanceled) {
-			return false;
-		}
-		mDbxAcctMgr = booksFragment.getAccountManager();
-		// Search .fb2 files in dropbox
 		try {
-			DbxFileSystem fileSystem = DbxFileSystem.forAccount(mDbxAcctMgr
-					.getLinkedAccount());
-			entries = FileSystemUtils.getFb2Files(fileSystem, DbxPath.ROOT);
+			entries = DropboxUtils.getFb2Files(DbxPath.ROOT);
+			if (mCanceled) {
+				return false;
+			}
 		} catch (DbxException e) {
 			e.printStackTrace();
 		}

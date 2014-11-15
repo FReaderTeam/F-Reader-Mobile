@@ -1,33 +1,24 @@
 package com.freader;
 
-import java.io.File;
 import java.io.IOException;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
-import com.dropbox.sync.android.DbxAccountManager;
-import com.dropbox.sync.android.DbxException;
-import com.dropbox.sync.android.DbxException.Unauthorized;
-import com.dropbox.sync.android.DbxFile;
-import com.dropbox.sync.android.DbxFileSystem;
-import com.dropbox.sync.android.DbxPath;
-import com.dropbox.sync.android.DbxPath.InvalidPathException;
+import com.freader.utils.DropboxUtils;
+import com.freader.utils.ToastUtils;
 
 public class UploadBookTask extends AsyncTask<Void, Long, Boolean> {
-	private final ProgressDialog mDialog;
-	DbxAccountManager mDbxAcctMgr;
-	String mBookPath;
-	String mBookName;
-	Context mContext;
 
-	public UploadBookTask(Context mContext, String mBookName, String mBookPath,
-			DbxAccountManager mDbxAcctMgr) {
+	private final ProgressDialog mDialog;
+	private final String mBookPath;
+	private final String mBookName;
+	private final Context mContext;
+
+	public UploadBookTask(Context mContext, String mBookName, String mBookPath) {
 		this.mBookPath = mBookPath;
 		this.mBookName = mBookName;
-		this.mDbxAcctMgr = mDbxAcctMgr;
 		this.mContext = mContext;
 
 		mDialog = new ProgressDialog(mContext);
@@ -41,31 +32,13 @@ public class UploadBookTask extends AsyncTask<Void, Long, Boolean> {
 
 	@Override
 	protected Boolean doInBackground(Void... params) {
-		DbxFileSystem dbxFs = null;
-		DbxFile testFile;
+		String srcPath = mBookPath;
+		String dstPath = "/FReaderBooks/" + mBookName;
 		try {
-			dbxFs = DbxFileSystem.forAccount(mDbxAcctMgr.getLinkedAccount());
-		} catch (Unauthorized e) {
-			e.printStackTrace();
-			return false;
-		}
-		try {
-			testFile = dbxFs.create(new DbxPath("/FReaderBooks/" + mBookName));
-		} catch (InvalidPathException e) {
-			e.printStackTrace();
-			return false;
-		} catch (DbxException e) {
-			e.printStackTrace();
-			return false;
-		}
-		File file = new File(mBookPath);
-		try {
-			testFile.writeFromExistingFile(file, false);
+			DropboxUtils.writeFileToDropbox(srcPath, dstPath);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
-		} finally {
-			testFile.close();
 		}
 		return true;
 	}
@@ -74,9 +47,7 @@ public class UploadBookTask extends AsyncTask<Void, Long, Boolean> {
 	protected void onPostExecute(Boolean result) {
 		mDialog.dismiss();
 		if (result) {
-			Toast msg = Toast.makeText(mContext, R.string.uploading_successful,
-					Toast.LENGTH_LONG);
-			msg.show();
+			ToastUtils.showLongToast(mContext, R.string.uploading_successful);
 		}
 	}
 }

@@ -21,6 +21,7 @@ import com.freader.*;
 
 import com.freader.bookmodel.PagesHolder;
 import com.freader.dao.PositionDao;
+import com.freader.utils.DropboxUtils;
 
 import java.util.HashMap;
 
@@ -46,81 +47,87 @@ public class ScreenSlideActivity extends FragmentActivity {
 	private String dbPath;
 	private String path;
 	private int firstPage;
-	
+
 	private ScreenSlideActivity screenSlideActivity;
 
 	@Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_screen_slide);
-        mPager = (ViewPager) findViewById(R.id.pager);
-        mPager.setPageTransformer(true, new ZoomOutPageTransformer());
-        title = getIntent().getStringExtra(TITLE);
-        author = getIntent().getStringExtra(NAME);
-        paragraphsToPages = (HashMap<Integer, Integer>) getIntent().getSerializableExtra(P_HASH_MAP);
-        path = getIntent().getStringExtra(PATH);
-        dbPath = getIntent().getStringExtra(DB_PATH);
-        pages = PagesHolder.getInstance().getPages();
-        numberOfPages = getIntent().getIntExtra(PAGES_NUMBER, 0);
-        numbersOfPageForProgressTextView = numberOfPages;
-        mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
-        mPager.setAdapter(mPagerAdapter);
-        seekBar = (SeekBar)findViewById(R.id.seekBarProgress);
-        progressTextView = (TextView)findViewById(R.id.textViewProgress);
-        authorAndTitleTextView = (TextView)findViewById(R.id.textViewAuthorAndTitle);
-        
-        seekBar.measure(MeasureSpec.UNSPECIFIED,MeasureSpec.UNSPECIFIED);
-        Log.w("freaderseekbar"," " + seekBar.getMeasuredHeight());
-        progressTextView.measure(MeasureSpec.UNSPECIFIED,MeasureSpec.UNSPECIFIED);
-        Log.w("freaderprogress"," " + progressTextView.getHeight());
-        
-        authorAndTitleTextView.setText(author + " " + "\"" + title + "\"");
-        try {
-        	int paragraphNumber = (int)PositionDao.getPosition(AuthorizationActivity.datastore,dbPath);
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_screen_slide);
+		mPager = (ViewPager) findViewById(R.id.pager);
+		mPager.setPageTransformer(true, new ZoomOutPageTransformer());
+		title = getIntent().getStringExtra(TITLE);
+		author = getIntent().getStringExtra(NAME);
+		paragraphsToPages = (HashMap<Integer, Integer>) getIntent()
+				.getSerializableExtra(P_HASH_MAP);
+		path = getIntent().getStringExtra(PATH);
+		dbPath = getIntent().getStringExtra(DB_PATH);
+		pages = PagesHolder.getInstance().getPages();
+		numberOfPages = getIntent().getIntExtra(PAGES_NUMBER, 0);
+		numbersOfPageForProgressTextView = numberOfPages;
+		mPagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
+		mPager.setAdapter(mPagerAdapter);
+		seekBar = (SeekBar) findViewById(R.id.seekBarProgress);
+		progressTextView = (TextView) findViewById(R.id.textViewProgress);
+		authorAndTitleTextView = (TextView) findViewById(R.id.textViewAuthorAndTitle);
+
+		seekBar.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+		Log.w("freaderseekbar", " " + seekBar.getMeasuredHeight());
+		progressTextView.measure(MeasureSpec.UNSPECIFIED,
+				MeasureSpec.UNSPECIFIED);
+		Log.w("freaderprogress", " " + progressTextView.getHeight());
+
+		authorAndTitleTextView.setText(author + " " + "\"" + title + "\"");
+		try {
+			int paragraphNumber = (int) PositionDao.getPosition(
+					DropboxUtils.getDefaultDatastore(), dbPath);
 			firstPage = paragraphsToPages.get(paragraphNumber);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        mPager.setCurrentItem(firstPage);
-        seekBar.setProgress(firstPage);
-        mPager.setOnPageChangeListener(new OnPageChangeListener() {
+		mPager.setCurrentItem(firstPage);
+		seekBar.setProgress(firstPage);
+		mPager.setOnPageChangeListener(new OnPageChangeListener() {
 
-            @Override
-            public void onPageSelected(int position) {
-            }
+			@Override
+			public void onPageSelected(int position) {
+			}
 
-            @Override
-            public void onPageScrolled(int position, float positionOffset,
-                int positionOffsetPixels) {
-            	seekBar.setProgress(position);
-            	progressTextView.setText(position + 1 + "/" + numbersOfPageForProgressTextView);
-            }
+			@Override
+			public void onPageScrolled(int position, float positionOffset,
+					int positionOffsetPixels) {
+				seekBar.setProgress(position);
+				progressTextView.setText(position + 1 + "/"
+						+ numbersOfPageForProgressTextView);
+			}
 
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-          });
-        
-        seekBar.setMax(numbersOfPageForProgressTextView - 1);
-        seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-        	
-        	@Override
-        	public void onProgressChanged(SeekBar seekBar, int progress,
-        			boolean fromUser) {
-        	}
+			@Override
+			public void onPageScrollStateChanged(int state) {
+			}
+		});
 
-        	@Override
-        	public void onStartTrackingTouch(SeekBar seekBar) {        		
-        	}
+		seekBar.setMax(numbersOfPageForProgressTextView - 1);
+		seekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
-        	@Override
-        	public void onStopTrackingTouch(SeekBar seekBar) {
-        		mPager.setCurrentItem(seekBar.getProgress());
-        		progressTextView.setText(seekBar.getProgress() + 1 + "/" + numbersOfPageForProgressTextView);
-        	}
-        });
-        progressTextView.setText(firstPage + 1 + "/" + numbersOfPageForProgressTextView);
-        screenSlideActivity = this;
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+			}
+
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+			}
+
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				mPager.setCurrentItem(seekBar.getProgress());
+				progressTextView.setText(seekBar.getProgress() + 1 + "/"
+						+ numbersOfPageForProgressTextView);
+			}
+		});
+		progressTextView.setText(firstPage + 1 + "/"
+				+ numbersOfPageForProgressTextView);
+		screenSlideActivity = this;
 	}
 
 	private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
@@ -134,14 +141,17 @@ public class ScreenSlideActivity extends FragmentActivity {
 					.entrySet()) {
 				if (position == entry.getValue()) {
 					try {
-						PositionDao.savePosition(AuthorizationActivity.datastore, dbPath, (long) entry.getKey());
+						PositionDao.savePosition(
+								DropboxUtils.getDefaultDatastore(), dbPath,
+								(long) entry.getKey());
 					} catch (DbxException e) {
 						e.printStackTrace();
 					}
 					break;
 				}
 			}
-			return new ScreenSlidePageFragment(pages.get(position), screenSlideActivity);
+			return new ScreenSlidePageFragment(pages.get(position),
+					screenSlideActivity);
 		}
 
 		@Override
@@ -167,9 +177,9 @@ public class ScreenSlideActivity extends FragmentActivity {
 	public String getScreenSlideDbPath() {
 		return dbPath;
 	}
-	
+
 	public String getScreenSlidePath() {
 		return path;
 	}
-	
+
 }

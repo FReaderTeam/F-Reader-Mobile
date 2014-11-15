@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * EBook - class that contains fields describing the parameters and 
- * properties of the e-book
+ * EBook - class that contains fields describing the parameters and properties
+ * of the e-book
  */
 public class EBook {
 	/**
-	 * True, if the processing of the e-book was successful. 
-	 * False if the e-book could not be processed.
+	 * True, if the processing of the e-book was successful. False if the e-book
+	 * could not be processed.
 	 */
 	public boolean isOk;
 	/**
@@ -61,10 +61,11 @@ public class EBook {
 	 * Picture of e-book cover
 	 */
 	public byte[] cover;
-	
+
 	public ArrayList<String> parsedBook;
-	
+
 	public boolean doExtractCover;
+
 	/**
 	 * The class constructor, fills the fields with null values
 	 */
@@ -74,4 +75,13 @@ public class EBook {
 		this.translators = new ArrayList<Person>(2);
 		this.isOk = false;
 	}
+
+	public String getAuthorName() {
+		String info = authors.get(0).firstName;
+		if (authors.get(0).middleName != null)
+			info += " " + authors.get(0).middleName + " ";
+		info += authors.get(0).lastName;
+		return info;
+	}
+
 }
