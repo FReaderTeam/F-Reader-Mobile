@@ -1,7 +1,9 @@
 package com.freader.bookprototype;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,14 +18,12 @@ import android.view.View.MeasureSpec;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+
 import com.dropbox.sync.android.DbxException;
-import com.freader.*;
-
+import com.freader.AuthorizationActivity;
+import com.freader.R;
 import com.freader.bookmodel.PagesHolder;
-import com.freader.dao.PositionDao;
 import com.freader.utils.DropboxUtils;
-
-import java.util.HashMap;
 
 public class ScreenSlideActivity extends FragmentActivity {
 
@@ -50,6 +50,7 @@ public class ScreenSlideActivity extends FragmentActivity {
 
 	private ScreenSlideActivity screenSlideActivity;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -79,8 +80,7 @@ public class ScreenSlideActivity extends FragmentActivity {
 
 		authorAndTitleTextView.setText(author + " " + "\"" + title + "\"");
 		try {
-			int paragraphNumber = (int) PositionDao.getPosition(
-					DropboxUtils.getDefaultDatastore(), dbPath);
+			int paragraphNumber = DropboxUtils.getPosition(dbPath);
 			firstPage = paragraphsToPages.get(paragraphNumber);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -141,9 +141,8 @@ public class ScreenSlideActivity extends FragmentActivity {
 					.entrySet()) {
 				if (position == entry.getValue()) {
 					try {
-						PositionDao.savePosition(
-								DropboxUtils.getDefaultDatastore(), dbPath,
-								(long) entry.getKey());
+						DropboxUtils
+								.savePosition(dbPath, (long) entry.getKey());
 					} catch (DbxException e) {
 						e.printStackTrace();
 					}

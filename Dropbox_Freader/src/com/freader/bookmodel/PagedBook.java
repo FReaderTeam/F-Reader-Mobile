@@ -6,14 +6,14 @@ import java.util.ArrayList;
 public class PagedBook extends Book {
 
 	public static ArrayList<String> pages;
-	private int current_page;
-	private HashMap<Integer, Integer> paragraphs_to_pages;
+	private int currentPage;
+	private HashMap<Integer, Integer> paragraphsToPages;
 	
 	public PagedBook(String t, String a, ArrayList<String> p, HashMap<Integer,Integer> paragraphs_to_pages) {
 		super(t, a);
 		pages = p;
-		current_page = 1;
-		this.paragraphs_to_pages = paragraphs_to_pages;
+		currentPage = 1;
+		this.paragraphsToPages = paragraphs_to_pages;
 	}
 	
 	public int getPagesNum(){
@@ -25,15 +25,15 @@ public class PagedBook extends Book {
 	}
 	
 	public String getCurrentPage(){
-		return pages.get(current_page-1);
+		return pages.get(currentPage-1);
 	}
 	
 	public HashMap<Integer, Integer> getHashMap(){
-		return paragraphs_to_pages;
+		return paragraphsToPages;
 	}
 	
 	public String getPage(int index){
-		current_page = index;
+		currentPage = index;
 		return pages.get(index-1);
 	}
 	

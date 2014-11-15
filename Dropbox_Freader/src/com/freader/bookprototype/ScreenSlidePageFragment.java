@@ -116,7 +116,6 @@ public class ScreenSlidePageFragment extends Fragment {
 				return false;
 			}
 		});
-
 		textSize = mainTextTextView.getTextSize();
 		return view;
 	}
