@@ -10,7 +10,6 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Process;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -36,13 +35,9 @@ public class ScreenSlideWaiting extends FragmentActivity{
     private String bookFullPath;
     public String dbPath;
     private CharSequence text;
-    private int size;
-    
-    private long starttime;
-    
-    private String fontSizeString;
     private SharedPreferences sp;
     private static final String FRAGMENT_FONT_SIZE = "fragmentFontSize";
+    private static final String FONT_SIZE = "fontSize";
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,17 +48,13 @@ public class ScreenSlideWaiting extends FragmentActivity{
         ArrayList<String> paragraphs = PagesHolder.getInstance().getParagraphs();
         bookFullPath = getIntent().getStringExtra(PATH);
         dbPath = getIntent().getStringExtra(DB_PATH);
-        
         sp = getSharedPreferences(FRAGMENT_FONT_SIZE, 
                 Context.MODE_PRIVATE);
-        String fontSizeString = getIntent().getStringExtra("fontSize");
-        
+        String fontSizeString = getIntent().getStringExtra(FONT_SIZE);
         this.parsedBook = new ParsedBook(title, author, paragraphs);
         text = parsedBook.getFirstPages();
         textViewForGetSize = (TextView)findViewById(R.id.textViewForGetSize);
         textViewForGetSize.setText(text);
-        
-        Log.w("GHGHGHGHGH", fontSizeString + "");
         if(sp.contains(FRAGMENT_FONT_SIZE)) {
     		textViewForGetSize.setTextSize(Integer.parseInt(
 					sp.getString(FRAGMENT_FONT_SIZE, String.valueOf(
@@ -75,26 +66,25 @@ public class ScreenSlideWaiting extends FragmentActivity{
 			editor.putString(FRAGMENT_FONT_SIZE, fontSizeString);
 			editor.apply();
         }
-        
         textViewForGetSize.setVisibility(View.INVISIBLE);
         parsedBook.setActivity(this);
         ViewTreeObserver vto = textViewForGetSize.getViewTreeObserver(); 
         vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
-            @Override 
+            @SuppressWarnings("deprecation")
+			@Override 
             public void onGlobalLayout() { 
-                textViewForGetSize.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
-                starttime = System.nanoTime();
+                textViewForGetSize.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 parsedBook.setTextView(textViewForGetSize);
                 BookFetchRunnable bfr = new BookFetchRunnable(parsedBook);
-                bfr.setPriority(Process.THREAD_PRIORITY_BACKGROUND + Process.THREAD_PRIORITY_MORE_FAVORABLE);
+                bfr.setPriority(Process.THREAD_PRIORITY_BACKGROUND + 
+                		Process.THREAD_PRIORITY_MORE_FAVORABLE);
                 bfr.start();
             }
         });
 	}
 
-
-	public void callback(ArrayList<CharSequence> pages, HashMap<Integer, Integer> hm) {
-		Log.w("freader", String.valueOf(System.nanoTime() - starttime));
+	public void callback(ArrayList<CharSequence> pages, 
+			HashMap<Integer, Integer> hm) {
 		Intent intent = new Intent(this, ScreenSlideActivity.class);
 		intent.putExtra(TITLE, title); 
 		intent.putExtra(NAME, author);
