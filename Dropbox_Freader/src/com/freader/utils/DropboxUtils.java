@@ -93,7 +93,7 @@ public abstract class DropboxUtils {
 		DbxFileSystem dbxFs = getFileSystem();
 		DbxFile dbxFile = null;
 		try {
-			DbxPath dstDbxPath = new DbxPath("/FReaderBooks/" + dstPath);
+			DbxPath dstDbxPath = new DbxPath(dstPath);
 			dbxFile = dbxFs.create(dstDbxPath);
 			File androidFile = new File(srcPath);
 			dbxFile.writeFromExistingFile(androidFile, false);

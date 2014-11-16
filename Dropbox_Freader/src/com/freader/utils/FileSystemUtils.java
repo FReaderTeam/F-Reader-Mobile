@@ -1,17 +1,12 @@
 package com.freader.utils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 
-import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxFileInfo;
-import com.dropbox.sync.android.DbxFileSystem;
-import com.dropbox.sync.android.DbxPath;
 
 import android.os.Environment;
 

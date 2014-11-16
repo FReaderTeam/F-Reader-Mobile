@@ -38,7 +38,6 @@ public class BookPickerActivity extends Activity {
 
 	ListAdapter adapter;
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -95,7 +94,8 @@ public class BookPickerActivity extends Activity {
 				for (int i = 0; i < fileList.length; i++) {
 					temp[i + 1] = fileList[i];
 				}
-				temp[0] = new Item(getString(R.string.up), R.drawable.directory_up); // !!!!!!!!
+				temp[0] = new Item(getString(R.string.up),
+						R.drawable.directory_up); // !!!!!!!!
 				fileList = temp;
 			}
 		} else {
@@ -167,7 +167,6 @@ public class BookPickerActivity extends Activity {
 		case DIALOG_LOAD_FILE:
 			builder.setTitle(R.string.choose_book);
 			builder.setAdapter(adapter, new DialogInterface.OnClickListener() {
-				@SuppressWarnings("deprecation")
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					chosenFile = fileList[which].file;
@@ -189,7 +188,9 @@ public class BookPickerActivity extends Activity {
 					}
 
 					// Checks if 'up' was clicked
-					else if (chosenFile.equalsIgnoreCase(getString(R.string.up)) && !sel.exists()) {
+					else if (chosenFile
+							.equalsIgnoreCase(getString(R.string.up))
+							&& !sel.exists()) {
 
 						// present directory removed from list
 						String s = str.remove(str.size() - 1);

@@ -10,10 +10,8 @@ import android.os.AsyncTask;
 import com.dropbox.sync.android.DbxAccountManager;
 import com.dropbox.sync.android.DbxException;
 import com.dropbox.sync.android.DbxFileInfo;
-import com.dropbox.sync.android.DbxFileSystem;
 import com.dropbox.sync.android.DbxPath;
 import com.freader.utils.DropboxUtils;
-import com.freader.utils.FileSystemUtils;
 
 public class GetBookListTask extends AsyncTask<Void, Long, Boolean> {
 
