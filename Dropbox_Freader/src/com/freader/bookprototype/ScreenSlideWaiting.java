@@ -7,9 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Process;
 import android.support.v4.app.FragmentActivity;
+import android.view.Display;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -71,14 +73,14 @@ public class ScreenSlideWaiting extends FragmentActivity{
         ViewTreeObserver vto = textViewForGetSize.getViewTreeObserver(); 
         vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
             @SuppressWarnings("deprecation")
-			@Override 
+            @Override 
             public void onGlobalLayout() { 
-                textViewForGetSize.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                parsedBook.setTextView(textViewForGetSize);
-                BookFetchRunnable bfr = new BookFetchRunnable(parsedBook);
-                bfr.setPriority(Process.THREAD_PRIORITY_BACKGROUND + 
-                		Process.THREAD_PRIORITY_MORE_FAVORABLE);
-                bfr.start();
+            	textViewForGetSize.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            	parsedBook.setTextView(textViewForGetSize);
+            	BookFetchRunnable bfr = new BookFetchRunnable(parsedBook);
+            	bfr.setPriority(Process.THREAD_PRIORITY_BACKGROUND + 
+            			Process.THREAD_PRIORITY_MORE_FAVORABLE);
+            	bfr.start();
             }
         });
 	}

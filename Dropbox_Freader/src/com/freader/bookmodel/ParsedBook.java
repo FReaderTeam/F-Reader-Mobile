@@ -14,8 +14,6 @@ public class ParsedBook extends Book {
 	TextView textView;
 	ScreenSlideWaiting activity;
 
-	int lines_num;
-
 	public ParsedBook(String title, String author, ArrayList<String> parapgraphs) {
 		super(title, author);
 		paragraphs = parapgraphs;
@@ -39,7 +37,7 @@ public class ParsedBook extends Book {
 	public void setActivity(ScreenSlideWaiting screenSlideWaiting) {
 		this.activity = screenSlideWaiting;
 	}
-
+	
 	public int getSize() {
 		return paragraphs.size();
 	}

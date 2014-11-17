@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -76,14 +77,25 @@ public class BookCollectionFragment extends Fragment {
 		});
 
 		mLastOpenedBook = (Button) view.findViewById(R.id.last_opened_book);
-		mLastOpenedBook.setOnTouchListener(new OnTouchListener() {
-
+//		mLastOpenedBook.setOnTouchListener(new OnTouchListener() {
+//
+//			@Override
+//			public boolean onTouch(View v, MotionEvent event) {
+//				lastOpenedBookPosition = SharedPreferencesUtils
+//						.getPosition(sharedPreferences);
+//				openBook(lastOpenedBookPosition);
+//				return false;
+//			}
+//		});
+		
+		mLastOpenedBook.setOnClickListener(new View.OnClickListener() {
+			
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
 				lastOpenedBookPosition = SharedPreferencesUtils
 						.getPosition(sharedPreferences);
 				openBook(lastOpenedBookPosition);
-				return false;
 			}
 		});
 
@@ -128,6 +140,7 @@ public class BookCollectionFragment extends Fragment {
 	}
 
 	private void openBook(int position) {
+		Log.w("OPENED BOOK", "OPENED");
 		mBooks.get(position).path.getName();
 		String bookName = mBooks.get(position).path.getName();
 		DbxPath bookPath = mBooks.get(position).path;
