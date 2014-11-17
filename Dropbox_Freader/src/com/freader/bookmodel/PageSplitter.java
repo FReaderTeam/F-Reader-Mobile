@@ -45,10 +45,13 @@ public class PageSplitter {
 
 	private void appendText(String text, TextPaint textPaint) {
 		String[] words = text.split(" ", -1);
+		textPaint.setFakeBoldText(false);
 		int i;
 		for (i = 0; i < words.length - 1; i++) {
-			if (words[i].equals("%title"))
+			if (words[i].equals("%title")){
+				textPaint.setFakeBoldText(true);
 				appendWord("\t", textPaint);
+			}
 			else if (words[i].equals("%new-section"))
 				endPage();
 			else
